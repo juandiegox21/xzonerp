@@ -6,7 +6,6 @@
 #include <fixes>
 #include <streamer>
 #include <a_mysql>
-#include <eSelection>
 #include <sscanf2>
 #include <izcmd>
 #include <crashdetect>
