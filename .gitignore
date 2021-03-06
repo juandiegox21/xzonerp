@@ -6,7 +6,6 @@
 *.amx
 *.lst
 *.asm
-.env
 # Vendor directory for dependencies
 dependencies/
 
@@ -48,3 +47,6 @@ samp.ban
 #
 
 *.sublime-workspace
+
+.env
+scriptfiles/DANGEROUS_SERVER_ROOT
