@@ -28,11 +28,6 @@ Happy Pawning!
 
 ## Installation
 
-Simply install to your project:
-
-```bash
-sampctl package install juandiegox21/xzonerp
-```
 ## Usage
 
 <!--
