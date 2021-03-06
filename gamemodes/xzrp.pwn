@@ -4,11 +4,11 @@
 #define 	MAX_PLAYERS 		100
 
 #include <fixes>
+#include <crashdetect>
 #include <streamer>
 #include <a_mysql>
 #include <sscanf2>
 #include <izcmd>
-#include <crashdetect>
 
 #define 			function%0(%1) 							forward %0(%1); public %0(%1)
 #if !defined isnull

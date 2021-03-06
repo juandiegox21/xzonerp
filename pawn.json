@@ -5,13 +5,13 @@
 	"output": "gamemodes/xzrp.amx",
 	"dependencies": [
 		"sampctl/samp-stdlib",
+		"Zeex/samp-plugin-crashdetect:v4.19.4",
 		"pawn-lang/sa-mp-fixes",
 		"pBlueG/SA-MP-MySQL:R41-4",
 		"maddinat0r/sscanf:v2.8.3",
 		"samp-incognito/samp-streamer-plugin:v2.9.4",
 		"pawn-lang/YSI-Includes:v4.0.2",
-		"YashasSamaga/I-ZCMD",
-		"Zeex/samp-plugin-crashdetect:v4.19.4"
+		"YashasSamaga/I-ZCMD"
 	],
 	"local": true,
 	"runtime": {
