@@ -6,12 +6,16 @@
 	"dependencies": [
 		"sampctl/samp-stdlib",
 		"Zeex/samp-plugin-crashdetect:v4.19.4",
-		"pawn-lang/sa-mp-fixes",
 		"pBlueG/SA-MP-MySQL:R41-4",
+		"pawn-lang/sa-mp-fixes",
 		"maddinat0r/sscanf:v2.8.3",
+		"IllidanS4/PawnPlus",
 		"samp-incognito/samp-streamer-plugin:v2.9.4",
-		"pawn-lang/YSI-Includes:v4.0.2",
-		"YashasSamaga/I-ZCMD"
+		"pawn-lang/YSI-Includes",
+		"YashasSamaga/I-ZCMD",
+		"TommyB123/eSelection",
+		"dakyskye/pawn-env:1.1.1",
+		"Southclaws/samp-logger"
 	],
 	"local": true,
 	"runtime": {
