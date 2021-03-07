@@ -107,7 +107,7 @@ hook OnPlayerSpawn(playerid)
 	return 1;
 }
 
-UpdatePlayerData(playerid, reason)
+static UpdatePlayerData(playerid, reason)
 {
 	if (Player[playerid][IsLoggedIn] == false) return 0;
 
@@ -125,48 +125,6 @@ UpdatePlayerData(playerid, reason)
 	// orm_save sends an UPDATE query
 	orm_save(Player[playerid][ORM_ID]);
 	orm_destroy(Player[playerid][ORM_ID]);
-	return 1;
-}
-
-forward OnPlayerRegister(playerid);
-public OnPlayerRegister(playerid)
-{
-	SendClientMessage(playerid, COLOR_ORANGE, "Tu cuenta ha sido registrada exitosamente, bienvenido!");
-
-	Player[playerid][IsLoggedIn] = true;
-
-	Player[playerid][Pos_X] = DEFAULT_POS_X;
-	Player[playerid][Pos_Y] = DEFAULT_POS_Y;
-	Player[playerid][Pos_Z] = DEFAULT_POS_Z;
-	Player[playerid][Pos_Angle] = DEFAULT_POS_A;
-
-	SetSpawnInfo(playerid, NO_TEAM, 0, Player[playerid][Pos_X], Player[playerid][Pos_Y], Player[playerid][Pos_Z], Player[playerid][Pos_Angle], 0, 0, 0, 0, 0, 0);
-	SpawnPlayer(playerid);
-	
-	return 1;
-}
-
-forward OnLoginTimeout(playerid);
-public OnLoginTimeout(playerid)
-{
-    // reset the variable that stores the timerid
-	Player[playerid][LoginTimer] = 0;
-
-	Dialog_Show(playerid, DIALOG_STYLE_MSGBOX, "Ingresa en tu cuenta", "Has sido expulsado por tardarte mucho en ingresar una contraseña, vuelve a entrar para intentar de nuevo.", "Ok", "");
-	DelayedKick(playerid);
-	return 1;
-}
-
-forward _KickPlayerDelayed(playerid);
-public _KickPlayerDelayed(playerid)
-{
-	Kick(playerid);
-	return 1;
-}
-
-static DelayedKick(playerid, time = 500)
-{
-	SetTimerEx("_KickPlayerDelayed", time, false, "d", playerid);
 	return 1;
 }
 
@@ -257,6 +215,24 @@ public OnPlayerDataLoaded(playerid, race_check)
 	return 1;
 }
 
+forward OnPlayerRegister(playerid);
+public OnPlayerRegister(playerid)
+{
+	SendClientMessage(playerid, COLOR_ORANGE, "Tu cuenta ha sido registrada exitosamente, bienvenido!");
+
+	Player[playerid][IsLoggedIn] = true;
+
+	Player[playerid][Pos_X] = DEFAULT_POS_X;
+	Player[playerid][Pos_Y] = DEFAULT_POS_Y;
+	Player[playerid][Pos_Z] = DEFAULT_POS_Z;
+	Player[playerid][Pos_Angle] = DEFAULT_POS_A;
+
+	SetSpawnInfo(playerid, NO_TEAM, 0, Player[playerid][Pos_X], Player[playerid][Pos_Y], Player[playerid][Pos_Z], Player[playerid][Pos_Angle], 0, 0, 0, 0, 0, 0);
+	SpawnPlayer(playerid);
+	
+	return 1;
+}
+
 static AuthenticatePlayer(playerid)
 {
     SendClientMessage(playerid, COLOR_ORANGE, "Bienvenido de vuelta!");
@@ -270,4 +246,15 @@ static AuthenticatePlayer(playerid)
     SpawnPlayer(playerid);
 
     return 1;
+}
+
+forward OnLoginTimeout(playerid);
+public OnLoginTimeout(playerid)
+{
+    // reset the variable that stores the timerid
+	Player[playerid][LoginTimer] = 0;
+
+	Dialog_Show(playerid, DIALOG_STYLE_MSGBOX, "Ingresa en tu cuenta", "Has sido expulsado por tardarte mucho en ingresar una contraseña, vuelve a entrar para intentar de nuevo.", "Ok", "");
+	DelayedKick(playerid);
+	return 1;
 }

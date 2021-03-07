@@ -35,3 +35,17 @@ static AntiDeAMX()
 	};
 	#pragma unused a
 }
+
+// Delay kick
+forward _KickPlayerDelayed(playerid);
+public _KickPlayerDelayed(playerid)
+{
+	Kick(playerid);
+	return 1;
+}
+
+DelayedKick(playerid, time = 500)
+{
+	SetTimerEx("_KickPlayerDelayed", time, false, "d", playerid);
+	return 1;
+}
