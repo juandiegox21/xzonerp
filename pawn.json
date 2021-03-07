@@ -15,7 +15,10 @@
 		"YashasSamaga/I-ZCMD",
 		"TommyB123/eSelection",
 		"dakyskye/pawn-env:1.1.1",
-		"Southclaws/samp-logger"
+		"Southclaws/samp-logger",
+		"Open-GTO/protection",
+		"Open-GTO/weaponskill",
+		"Open-GTO/getspawninfo"
 	],
 	"local": true,
 	"runtime": {
