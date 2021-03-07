@@ -18,6 +18,8 @@ enum E_PLAYERS
 	Name[MAX_PLAYER_NAME],
 	Password[65], // the output of SHA256_PassHash function (which was added in 0.3.7 R1 version) is always 256 bytes in length, or the equivalent of 64 Pawn cells
 	Salt[17],
+	Faction,
+	Job,
 	Float: Pos_X,
 	Float: Pos_Y,
 	Float: Pos_Z,
@@ -31,20 +33,6 @@ enum E_PLAYERS
 new Player[MAX_PLAYERS][E_PLAYERS];
 
 new g_MysqlRaceCheck[MAX_PLAYERS];
-
-hook OnGameModeExit()
-{
-	// save all player data before closing connection
-	for (new i = 0, j = GetPlayerPoolSize(); i <= j; i++) // GetPlayerPoolSize function was added in 0.3.7 version and gets the highest playerid currently in use on the server
-	{
-		if (IsPlayerConnected(i))
-		{
-            Kick(i);
-		}
-	}
-
-	return 1;
-}
 
 hook OnPlayerConnect(playerid)
 {
@@ -63,6 +51,8 @@ hook OnPlayerConnect(playerid)
 	orm_addvar_string(ormid, Player[playerid][Name], MAX_PLAYER_NAME, "username");
 	orm_addvar_string(ormid, Player[playerid][Password], 65, "password");
 	orm_addvar_string(ormid, Player[playerid][Salt], 17, "salt");
+	orm_addvar_int(ormid, Player[playerid][Faction], "faction");
+	orm_addvar_int(ormid, Player[playerid][Job], "job");
 	orm_addvar_float(ormid, Player[playerid][Pos_X], "pos_x");
 	orm_addvar_float(ormid, Player[playerid][Pos_Y], "pos_y");
 	orm_addvar_float(ormid, Player[playerid][Pos_Z], "pos_z");
@@ -257,4 +247,42 @@ public OnLoginTimeout(playerid)
 	Dialog_Show(playerid, DIALOG_STYLE_MSGBOX, "Ingresa en tu cuenta", "Has sido expulsado por tardarte mucho en ingresar una contraseña, vuelve a entrar para intentar de nuevo.", "Ok", "");
 	DelayedKick(playerid);
 	return 1;
+}
+
+forward GetPlayerJobId(playerid);
+stock GetPlayerJobId(playerid)
+{
+	return Player[playerid][Job];
+}
+
+//@TODO
+forward GetPlayerJobName(playerid);
+stock GetPlayerJobName(playerid)
+{
+	return Player[playerid][Job];
+}
+
+forward GetPlayerFactionId(playerid);
+stock GetPlayerFactionId(playerid)
+{
+	return Player[playerid][Faction];
+}
+
+//@TODO
+forward GetPlayerFactionName(playerid);
+stock GetPlayerFactionName(playerid)
+{
+	return Player[playerid][Faction];
+}
+
+stock GetPlayerNameRP(playerid)
+{
+	new NameRP[MAX_PLAYER_NAME];
+	if(IsPlayerConnected(playerid))
+	{
+		GetPlayerName(playerid, NameRP, MAX_PLAYER_NAME);
+	}
+	
+	for(new name = 0; name < MAX_PLAYER_NAME; name++) if(NameRP[name] == '_') NameRP[name] = ' ';
+	return NameRP;
 }

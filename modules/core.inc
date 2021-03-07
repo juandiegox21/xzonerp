@@ -2,7 +2,13 @@
 
 #define PlayerToPoint(%1,%2,%3,%4,%5)   IsPlayerInRangeOfPoint(%2,%1,%3,%4,%5)
 //----------- COLORS ----------------//
-#define COLOR_ORANGE	0xb57c01FF
+
+#define COLOR_ORANGE	0xff8c00FF
+#define COLOR_GREY		0xAFAFAFFF
+#define COLOR_RED		0xFF0000FF
+// Inline colors can be used inside a string
+#define COLOR_WHITE_INLINE	"{FFFFFF}"
+#define COLOR_ORANGE_INLINE	"{ff8c00}"
 
 hook OnGameModeInit() 
 {
@@ -17,6 +23,20 @@ hook OnGameModeInit()
     Protection_SetParamInt(PROTECTION_ALL, PROTECTION_ENABLED, 1);
     /// redefine name
     Protection_SetParamString(PROTECTION_TELEPORT, PROTECTION_NAME, "Teleport");
+}
+
+hook OnGameModeExit()
+{
+	// save all player data before closing connection
+	for (new i = 0, j = GetPlayerPoolSize(); i <= j; i++) // GetPlayerPoolSize function was added in 0.3.7 version and gets the highest playerid currently in use on the server
+	{
+		if (IsPlayerConnected(i))
+		{
+            Kick(i);
+		}
+	}
+
+	return 1;
 }
 
 // Avoid people clicking the spawn button
