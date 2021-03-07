@@ -12,7 +12,6 @@
 #include <a_mysql>
 #include <sscanf2>
 #include <PawnPlus>
-#include <izcmd>
 #include <eSelection>
 
 #define YSI_NO_HEAP_MALLOC
@@ -31,12 +30,14 @@
 // Server
 #include "../modules/time.inc"
 #include "../modules/core.inc"
+#include "../modules/cmd_process.inc"
 
 // MySQL
 #include "../modules/mysql.inc"
 
 // Player
 #include "../modules/player/account.inc"
+#include "../modules/player/commands.inc"
 
 // World
 #include "../modules/world/maps.inc"
