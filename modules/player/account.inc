@@ -274,15 +274,3 @@ stock GetPlayerFactionName(playerid)
 {
 	return Player[playerid][Faction];
 }
-
-stock GetPlayerNameRP(playerid)
-{
-	new NameRP[MAX_PLAYER_NAME];
-	if(IsPlayerConnected(playerid))
-	{
-		GetPlayerName(playerid, NameRP, MAX_PLAYER_NAME);
-	}
-	
-	for(new name = 0; name < MAX_PLAYER_NAME; name++) if(NameRP[name] == '_') NameRP[name] = ' ';
-	return NameRP;
-}
