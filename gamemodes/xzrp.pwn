@@ -33,18 +33,15 @@
 #include "../modules/server/cmd_process.inc"
 #include "../modules/server/mysql.inc" // MySQL connection
 
-// Factions
-#include "../modules/factions.inc"
-
 // Player
 #include "../modules/player/account.inc"
 #include "../modules/player/commands.inc"
 
-// Admin
-#include "../modules/admin/commands.inc"
-
 // Factions
 #include "../modules/factions.inc"
+
+// Admin
+#include "../modules/admin/commands.inc"
 
 // World
 #include "../modules/world/maps.inc"

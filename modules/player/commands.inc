@@ -91,9 +91,8 @@ static ListHelpCommands(playerid, itemId)
         case 8:
         {
             // Player is not part of a faction
-            if (GetPlayerFactionId(playerid) < 1) {
+            if (GetPlayerFactionId(playerid) < 1)
                 return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: No perteneces a una faccion.");
-            }
 
             SendClientMessage(playerid, COLOR_ORANGE, "[CMDS]: Facciones >");
             GetFactionCommands(playerid, GetPlayerFactionName(playerid));
@@ -204,4 +203,18 @@ CMD:s(playerid, params[])
     SendClientMessage(playerid, COLOR_YELLOW, string);
     printf("%s susurra a %s: %s", GetPlayerNameRP(playerid), GetPlayerNameRP(playerid2), params[1]);
 	return 1;
+}
+
+CMD:f(playerid, params[])
+{
+    if(!IsPlayerConnected(playerid)) return SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION] "COLOR_WHITE_INLINE" Debes estar logueado para usar este comado");
+    if (GetPlayerFactionId(playerid) < 1)
+        return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: No perteneces a una faccion.");
+
+    if(sscanf(params, "s[128]", params)) return SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION] "COLOR_WHITE_INLINE" /(f)accion [Texto]");
+
+    new PlayerFactionId = GetPlayerFactionId(playerid);
+    SendMessageToFactionMembers(playerid, PlayerFactionId, params);
+    
+    return 1;
 }
