@@ -268,9 +268,9 @@ stock GetPlayerFactionId(playerid)
 	return Player[playerid][FactionId];
 }
 
-//@TODO
 forward GetPlayerFactionName(playerid);
 stock GetPlayerFactionName(playerid)
 {
-	return Player[playerid][FactionId];
+	new FactionID = Player[playerid][FactionId];
+	return Factions[FactionID][Name];
 }

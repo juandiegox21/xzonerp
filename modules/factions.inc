@@ -8,15 +8,12 @@ enum E_FACTIONS
 {
 	ID,
 	Name[42],
-
-    Cache: Cache_ID,
 };
 new Factions[MAX_FACTIONS][E_FACTIONS];
 
 hook OnGameModeInit()
 {
     new query[128];
-
     mysql_format(MySQL_GetHandle(), query, sizeof(query), "SELECT * FROM `factions`");
 	mysql_tquery(MySQL_GetHandle(), query, "OnFactionsLoaded");
 }
