@@ -18,8 +18,8 @@ enum E_PLAYERS
 	Name[MAX_PLAYER_NAME],
 	Password[65], // the output of SHA256_PassHash function (which was added in 0.3.7 R1 version) is always 256 bytes in length, or the equivalent of 64 Pawn cells
 	Salt[17],
-	Faction,
-	Job,
+	FactionId,
+	JobId,
 	Float: Pos_X,
 	Float: Pos_Y,
 	Float: Pos_Z,
@@ -51,8 +51,8 @@ hook OnPlayerConnect(playerid)
 	orm_addvar_string(ormid, Player[playerid][Name], MAX_PLAYER_NAME, "username");
 	orm_addvar_string(ormid, Player[playerid][Password], 65, "password");
 	orm_addvar_string(ormid, Player[playerid][Salt], 17, "salt");
-	orm_addvar_int(ormid, Player[playerid][Faction], "faction");
-	orm_addvar_int(ormid, Player[playerid][Job], "job");
+	orm_addvar_int(ormid, Player[playerid][FactionId], "faction_id");
+	orm_addvar_int(ormid, Player[playerid][JobId], "job_id");
 	orm_addvar_float(ormid, Player[playerid][Pos_X], "pos_x");
 	orm_addvar_float(ormid, Player[playerid][Pos_Y], "pos_y");
 	orm_addvar_float(ormid, Player[playerid][Pos_Z], "pos_z");
@@ -252,25 +252,25 @@ public OnLoginTimeout(playerid)
 forward GetPlayerJobId(playerid);
 stock GetPlayerJobId(playerid)
 {
-	return Player[playerid][Job];
+	return Player[playerid][JobId];
 }
 
 //@TODO
 forward GetPlayerJobName(playerid);
 stock GetPlayerJobName(playerid)
 {
-	return Player[playerid][Job];
+	return Player[playerid][JobId];
 }
 
 forward GetPlayerFactionId(playerid);
 stock GetPlayerFactionId(playerid)
 {
-	return Player[playerid][Faction];
+	return Player[playerid][FactionId];
 }
 
 //@TODO
 forward GetPlayerFactionName(playerid);
 stock GetPlayerFactionName(playerid)
 {
-	return Player[playerid][Faction];
+	return Player[playerid][FactionId];
 }

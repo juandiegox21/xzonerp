@@ -28,16 +28,23 @@
 #include <protection>
 
 // Server
-#include "../modules/time.inc"
-#include "../modules/core.inc"
-#include "../modules/cmd_process.inc"
+#include "../modules/server/time.inc"
+#include "../modules/server/core.inc"
+#include "../modules/server/cmd_process.inc"
+#include "../modules/server/mysql.inc" // MySQL connection
 
-// MySQL
-#include "../modules/mysql.inc"
+// Factions
+#include "../modules/factions.inc"
 
 // Player
 #include "../modules/player/account.inc"
 #include "../modules/player/commands.inc"
+
+// Admin
+#include "../modules/admin/commands.inc"
+
+// Factions
+#include "../modules/factions.inc"
 
 // World
 #include "../modules/world/maps.inc"

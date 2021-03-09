@@ -20,8 +20,7 @@ CMD:ayuda(playerid, params[])
     , 
     "Seleccionar", "Cancelar");
 
-
-    return CMD_SUCCESS;
+    return 1;
 }
 
 static ListHelpCommands(playerid, itemId)
@@ -134,14 +133,13 @@ static GetFactionCommands(playerid, factionName)
 // Chat commands
 CMD:b(playerid, params[])
 {
-	if(IsPlayerConnected(playerid))
-	{
-		if(sscanf(params, "s[128]", params)) return SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION] "COLOR_WHITE_INLINE"/b [Texto]");
-		new string[120];
-		format(string, sizeof(string), "[ID: %d] %s: (( %s ))", playerid, GetPlayerNameRP(playerid), params);
-		ProxDetector(15.0, playerid, string, COLOR_FADE1, COLOR_FADE2, COLOR_FADE3, COLOR_FADE4, COLOR_FADE5);
-		printf("Chat OOC %s: %s", GetPlayerNameRP(playerid), params);
-	}
+	if(!IsPlayerConnected(playerid)) return SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION] "COLOR_WHITE_INLINE" Debes estar logueado para usar este comado");
+    if(sscanf(params, "s[128]", params)) return SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION] "COLOR_WHITE_INLINE"/b [Texto]");
+
+    new string[120];
+    format(string, sizeof(string), "[ID: %d] %s: (( %s ))", playerid, GetPlayerNameRP(playerid), params);
+    ProxDetector(15.0, playerid, string, COLOR_FADE1, COLOR_FADE2, COLOR_FADE3, COLOR_FADE4, COLOR_FADE5);
+    printf("Chat OOC %s: %s", GetPlayerNameRP(playerid), params);
 
 	return 1;
 }
