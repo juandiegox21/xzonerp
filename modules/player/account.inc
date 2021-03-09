@@ -272,5 +272,13 @@ forward GetPlayerFactionName(playerid);
 stock GetPlayerFactionName(playerid)
 {
 	new PlayerFactionId = Player[playerid][pFactionId];
-	return GetFactionName(PlayerFactionId);
+	new string[42];
+
+	if (PlayerFactionId < 1) {
+		format (string, sizeof string, "%s", "Civil");
+	} else {
+		format (string, sizeof string, "%s", GetFactionName(PlayerFactionId));
+	}
+
+	return string;
 }
