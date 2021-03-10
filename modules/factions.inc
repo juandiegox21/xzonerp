@@ -39,13 +39,13 @@ public OnFactionsLoaded()
     new rows;
     cache_get_row_count(rows);
 
-    if(rows < 1) return 1;
+    if(rows < 0) return 1;
 
     for (new row = 0; row < rows; row++) {
         cache_get_value_name_int(row, "id", Factions[row][fId]);
         cache_get_value_name(row, "name", Factions[row][fName]);
 
-        LoadFactionMembers(Factions[row][fId]);
+        // LoadFactionMembers(Factions[row][fId]);
     }
     
     return 1;
@@ -80,24 +80,39 @@ public OnFactionMembersLoaded(FactionId)
     return 1;
 }
 
-forward GetFactionName(FactionId);
-stock GetFactionName(FactionId)
+forward GetFactionsCount();
+stock GetFactionsCount()
 {
-    return Factions[FactionId][fName];
+    new count = 0;
+    for (new i = 0; i < MAX_FACTIONS; i++) {
+        if (Factions[i][fId] == 0) continue;
+        count++;
+    }
+
+    return count;
+}
+
+forward GetFactionName(const FactionId);
+stock GetFactionName(const FactionId)
+{
+    new FactionNameString[42];
+    format(FactionNameString, sizeof(FactionNameString), "%s", Factions[FactionId][fName]);
+
+    return FactionNameString;
 }
 
 forward SendMessageToFactionMembers(SenderId, FactionId, const message[]);
 public SendMessageToFactionMembers(SenderId, FactionId, const message[])
 {
-    new string[120], SenderName[120];
+    new string[220], SenderName[120];
     SenderName = GetPlayerNameRP(SenderId);
 
     for (new i = 0; i < MAX_PLAYERS; i++) {
         if(!IsPlayerConnected(i)) continue;
         else if (Player[i][pFactionId] != FactionId) continue;
 
-        format(string, sizeof(string), "[%s] %s : %s", GetFactionName(FactionId), SenderName, message);
-        SendClientMessage(i, COLOR_WHITE, string);
+        format(string, sizeof(string), "[%s] %s: %s", GetFactionName(FactionId), SenderName, message);
+        SendClientMessage(i, COLOR_DODGER_BLUE, string);
     }
 
     return 1;

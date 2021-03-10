@@ -271,14 +271,28 @@ stock GetPlayerFactionId(playerid)
 forward GetPlayerFactionName(playerid);
 stock GetPlayerFactionName(playerid)
 {
-	new PlayerFactionId = Player[playerid][pFactionId];
-	new string[42];
+	new PlayerFactionId = GetPlayerFactionId(playerid);
+	new FactionNameString[42];
 
-	if (PlayerFactionId < 1) {
-		format (string, sizeof string, "%s", "Civil");
+	if (PlayerFactionId == -1) {
+		FactionNameString = "Civil";
 	} else {
-		format (string, sizeof string, "%s", GetFactionName(PlayerFactionId));
+		FactionNameString = GetFactionName(PlayerFactionId);
 	}
 
-	return string;
+	return FactionNameString;
+}
+
+forward SetPlayerFactionId(playerid, FactionId);
+public SetPlayerFactionId(playerid, FactionId)
+{
+	if (FactionId < -1 || (FactionId > GetFactionsCount() - 1)) {
+		new string[64];
+		format(string, sizeof string, "[ATENCION] El rango de facciones es desde id -1 a id %d", GetFactionsCount() - 1);
+		return SendClientMessage(playerid, COLOR_RED, string);
+	}
+
+	Player[playerid][pFactionId] = FactionId;
+    orm_save(Player[playerid][pORM_ID]);
+	return 1;
 }

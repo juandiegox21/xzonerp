@@ -91,10 +91,9 @@ static ListHelpCommands(playerid, itemId)
         case 8:
         {
             // Player is not part of a faction
-            if (GetPlayerFactionId(playerid) < 1)
+            if (GetPlayerFactionId(playerid) == -1)
                 return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: No perteneces a una faccion.");
-
-            SendClientMessage(playerid, COLOR_ORANGE, "[CMDS]: Facciones >");
+                
             GetFactionCommands(playerid, GetPlayerFactionName(playerid));
             return 1;
         }
@@ -119,10 +118,10 @@ static GetJobCommands(playerid, jobName)
     return 1;
 }
 
-static GetFactionCommands(playerid, const factionName[])
+static GetFactionCommands(playerid, const FactionName[])
 {
     new string[40];
-    format(string, sizeof string, "[CMDS]: %s >", factionName);
+    format(string, sizeof string, "[CMDS]: %s >", FactionName);
     SendClientMessage(playerid, COLOR_ORANGE, string);
 
     SendClientMessage(playerid, COLOR_ORANGE, "[CMDS]:"COLOR_WHITE_INLINE" /renunciarfaccion");
@@ -133,8 +132,8 @@ CMD:cuenta(playerid, params[])
 {
 	if(!IsPlayerConnected(playerid)) return SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION] "COLOR_WHITE_INLINE" Debes estar logueado para usar este comado");
 
-    new string[120];
-    format(string, sizeof string, "Faccion: %s", GetPlayerFactionName(playerid));
+    new string[153];
+    format(string, sizeof string, "Faccion ID: %d | Faccion name: %s", GetPlayerFactionId(playerid), GetPlayerFactionName(playerid));
     SendClientMessage(playerid, COLOR_ORANGE, string);
     return 1;
 }
@@ -218,13 +217,11 @@ CMD:s(playerid, params[])
 CMD:f(playerid, params[])
 {
     if(!IsPlayerConnected(playerid)) return SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION] "COLOR_WHITE_INLINE" Debes estar logueado para usar este comado");
-    if (GetPlayerFactionId(playerid) < 1)
+    if (GetPlayerFactionId(playerid) == -1)
         return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: No perteneces a una faccion.");
 
     if(sscanf(params, "s[128]", params)) return SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION] "COLOR_WHITE_INLINE" /(f)accion [Texto]");
 
     new PlayerFactionId = GetPlayerFactionId(playerid);
-    SendMessageToFactionMembers(playerid, PlayerFactionId, params);
-    
-    return 1;
+    return SendMessageToFactionMembers(playerid, PlayerFactionId, params);
 }
