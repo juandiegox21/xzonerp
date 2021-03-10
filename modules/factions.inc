@@ -83,12 +83,17 @@ public OnFactionMembersLoaded(FactionId)
 }
 
 //@TODO
-stock GetFactionMembers(FactionSqlId)
+forward GetFactionMembers(FactionId);
+stock GetFactionMembers(FactionId)
 {
-    if (FactionMembers[FactionSqlId])
-    new stringFactionMembers[540], string[120];
-
+    new 
+        FactionSqlId = GetFactionSqlId(FactionId),
+        stringFactionMembers[540], 
+        string[120];
+        
     for (new FactionMember = 0; FactionMember < MAX_FACTION_MEMBERS; FactionMember++) {
+        if (FactionMembers[FactionId][FactionMember][fmFactionId] != FactionSqlId) continue;
+    
         new FactionMemberIsOnline[24];
         format(FactionMemberIsOnline, sizeof FactionMemberIsOnline, "%s", (FactionMembers[FactionId][FactionMember][fmOnline]) ? "Activo" : "Desconectado");
         format(string, sizeof string, "%s - %s\n", FactionMembers[FactionId][FactionMember][fmName], FactionMemberIsOnline);
@@ -110,7 +115,7 @@ stock GetFactionsCount()
     return count;
 }
 
-forward GetFactionSqlId();
+forward GetFactionSqlId(index);
 stock GetFactionSqlId(index)
 {
     return Factions[index][fId];

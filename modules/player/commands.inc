@@ -232,11 +232,11 @@ CMD:fmiembros(playerid, params[])
     if (GetPlayerFactionId(playerid) == -1)
         return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: No perteneces a una faccion.");
 
-    new PlayerFactionId = GetPlayerFactionId(playerid);
-    new FactionSqlId = GetFactionSqlId(PlayerFactionId);
-
-    new FactionMembersMessage[540];
-    FactionMembersMessage = GetFactionMembers(FactionSqlId);
+    new 
+        PlayerFactionId = GetPlayerFactionId(playerid),
+        FactionMembersMessage[540];
+        
+    FactionMembersMessage = GetFactionMembers(PlayerFactionId);
     SendClientMessage(playerid, COLOR_WHITE, FactionMembersMessage);
     return 1;
 }
