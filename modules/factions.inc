@@ -2,6 +2,7 @@
 #include <YSI\y_iterate>
 
 #define MAX_FACTIONS            5
+#define MAX_FACTION_RANKS       8    
 #define MAX_FACTION_MEMBERS     30    
 
 // Factions
@@ -12,10 +13,19 @@ enum E_FACTIONS
 };
 new Factions[MAX_FACTIONS][E_FACTIONS];
 
+enum E_FACTION_RANKS
+{
+    frId,
+    frName[32],
+    frFactionId
+};
+new FactionRanks[MAX_FACTIONS][MAX_FACTION_RANKS][E_FACTION_RANKS];
+
 enum E_FACTION_MEMBERS
 {
     fmId,
     fmName[42],
+    fmRank[32],
     fmFactionId,
     fmOnline
 }
@@ -46,6 +56,7 @@ public OnFactionsLoaded()
         cache_get_value_name_int(row, "id", Factions[row][fId]);
         cache_get_value_name(row, "name", Factions[row][fName]);
 
+        LoadFactionRanks(Factions[row][fId]);
         LoadFactionMembers(Factions[row][fId]);
     }
     
@@ -75,6 +86,7 @@ public OnFactionMembersLoaded(FactionId)
     for (new row = 0; row < rows; row++) {
         cache_get_value_name_int(row, "id", FactionMembers[FactionId][row][fmId]);
         cache_get_value_name(row, "name", FactionMembers[FactionId][row][fmName]);
+        cache_get_value_name(row, "rank", FactionMembers[FactionId][row][fmRank]);
         cache_get_value_name_int(row, "faction_id", FactionMembers[FactionId][row][fmFactionId]);
         cache_get_value_name_int(row, "online", FactionMembers[FactionId][row][fmOnline]);
     }
@@ -82,7 +94,41 @@ public OnFactionMembersLoaded(FactionId)
     return 1;
 }
 
-//@TODO
+static LoadFactionRanks(FactionId)
+{
+    new query[128];
+    mysql_format(MySQL_GetHandle(), query, sizeof(query), \
+        "SELECT * FROM `faction_ranks `" \
+        "where faction_id = %d", FactionId);
+
+	mysql_tquery(MySQL_GetHandle(), query, "OnFactionRanksLoaded", "d", FactionId);
+
+    return 1;
+}
+
+forward OnFactionRanksLoaded(FactionId);
+public OnFactionRanksLoaded(FactionId)
+{
+    new rows;
+    cache_get_row_count(rows);
+
+    if(rows < 1) return 1;
+
+    for (new row = 0; row < rows; row++) {
+        cache_get_value_name_int(row, "id", FactionRanks[FactionId][row][frId]);
+        cache_get_value_name(row, "name", FactionRanks[FactionId][row][frName]);
+        cache_get_value_name_int(row, "faction_id", FactionRanks[FactionId][row][frFactionId]);
+    }
+
+    return 1;
+}
+
+forward GetFactionRanks(FactionId);
+stock GetFactionRanks(FactionId)
+{
+    
+}
+
 forward GetFactionMembers(FactionId);
 stock GetFactionMembers(FactionId)
 {

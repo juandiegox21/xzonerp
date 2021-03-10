@@ -296,3 +296,10 @@ public SetPlayerFactionId(playerid, FactionId)
     orm_save(Player[playerid][pORM_ID]);
 	return 1;
 }
+
+forward SetPlayerFactionRank(playerid, FactionId, RankId);
+public SetPlayerFactionRank(playerid, FactionId, RankId)
+{
+
+	return 1;
+}
