@@ -119,13 +119,23 @@ static GetJobCommands(playerid, jobName)
     return 1;
 }
 
-static GetFactionCommands(playerid, factionName)
+static GetFactionCommands(playerid, const factionName[])
 {
     new string[40];
     format(string, sizeof string, "[CMDS]: %s >", factionName);
     SendClientMessage(playerid, COLOR_ORANGE, string);
 
     SendClientMessage(playerid, COLOR_ORANGE, "[CMDS]:"COLOR_WHITE_INLINE" /renunciarfaccion");
+    return 1;
+}
+
+CMD:cuenta(playerid, params[])
+{
+	if(!IsPlayerConnected(playerid)) return SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION] "COLOR_WHITE_INLINE" Debes estar logueado para usar este comado");
+
+    new string[120];
+    format(string, sizeof string, "Faccion: %s", GetPlayerFactionName(playerid));
+    SendClientMessage(playerid, COLOR_ORANGE, string);
     return 1;
 }
 
