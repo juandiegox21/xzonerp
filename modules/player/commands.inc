@@ -37,7 +37,7 @@ static ListHelpCommands(playerid, itemId)
         {
             SendClientMessage(playerid, COLOR_ORANGE, "[CMDS]: Chat >");
             SendClientMessage(playerid, COLOR_ORANGE, "[CMDS]:"COLOR_WHITE_INLINE" /(g)ritar - /(s)usurrar - /(f)accion - /(r)adio");
-            SendClientMessage(playerid, COLOR_ORANGE, "[CMDS]:"COLOR_WHITE_INLINE" /idioma - /b - /me - /do - /mp");
+            SendClientMessage(playerid, COLOR_ORANGE, "[CMDS]:"COLOR_WHITE_INLINE" /idioma - /b - /me - /do");
             return 1;
         }
 
@@ -110,7 +110,7 @@ static ListHelpCommands(playerid, itemId)
 
 static GetJobCommands(playerid, jobName)
 {
-    new string[40];
+    new string[120];
     format(string, sizeof string, "[CMDS]: %s >", jobName);
     SendClientMessage(playerid, COLOR_ORANGE, string);
 
@@ -120,7 +120,7 @@ static GetJobCommands(playerid, jobName)
 
 static GetFactionCommands(playerid, const FactionName[])
 {
-    new string[40];
+    new string[120];
     format(string, sizeof string, "[CMDS]: %s >", FactionName);
     SendClientMessage(playerid, COLOR_ORANGE, string);
 
@@ -224,4 +224,19 @@ CMD:f(playerid, params[])
 
     new PlayerFactionId = GetPlayerFactionId(playerid);
     return SendMessageToFactionMembers(playerid, PlayerFactionId, params);
+}
+
+CMD:fmiembros(playerid, params[])
+{
+    if(!IsPlayerConnected(playerid)) return SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION] "COLOR_WHITE_INLINE" Debes estar logueado para usar este comado");
+    if (GetPlayerFactionId(playerid) == -1)
+        return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: No perteneces a una faccion.");
+
+    new PlayerFactionId = GetPlayerFactionId(playerid);
+    new FactionSqlId = GetFactionSqlId(PlayerFactionId);
+
+    new FactionMembersMessage[540];
+    FactionMembersMessage = GetFactionMembers(FactionSqlId);
+    SendClientMessage(playerid, COLOR_WHITE, FactionMembersMessage);
+    return 1;
 }
