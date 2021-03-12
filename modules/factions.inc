@@ -57,27 +57,27 @@ public OnFactionsLoaded()
         cache_get_value_name_int(row, "id", Factions[row][fId]);
         cache_get_value_name(row, "name", Factions[row][fName]);
 
-        LoadFactionRanks(Factions[row][fId]);
-        LoadFactionMembers(Factions[row][fId]);
+        LoadFactionRanks(row, Factions[row][fId]);
+        LoadFactionMembers(row, Factions[row][fId]);
     }
     
     return 1;
 }
 
-static LoadFactionMembers(FactionId)
+static LoadFactionMembers(FactionIndex, FactionId)
 {
     new query[128];
     mysql_format(MySQL_GetHandle(), query, sizeof(query), \
         "SELECT * FROM `faction_members `" \
         "where faction_id = %d", FactionId);
 
-	mysql_tquery(MySQL_GetHandle(), query, "OnFactionMembersLoaded", "d", FactionId);
+	mysql_tquery(MySQL_GetHandle(), query, "OnFactionMembersLoaded", "d", FactionIndex);
 
     return 1;
 }
 
-forward OnFactionMembersLoaded(FactionId);
-public OnFactionMembersLoaded(FactionId)
+forward OnFactionMembersLoaded(FactionIndex);
+public OnFactionMembersLoaded(FactionIndex)
 {
     new rows;
     cache_get_row_count(rows);
@@ -85,30 +85,30 @@ public OnFactionMembersLoaded(FactionId)
     if(rows < 1) return 1;
 
     for (new row = 0; row < rows; row++) {
-        cache_get_value_name_int(row, "id", FactionMembers[FactionId][row][fmId]);
-        cache_get_value_name(row, "name", FactionMembers[FactionId][row][fmName]);
-        cache_get_value_name(row, "rank_id", FactionMembers[FactionId][row][fmRankId]);
-        cache_get_value_name_int(row, "faction_id", FactionMembers[FactionId][row][fmFactionId]);
-        cache_get_value_name_int(row, "online", FactionMembers[FactionId][row][fmOnline]);
+        cache_get_value_name_int(row, "id", FactionMembers[FactionIndex][row][fmId]);
+        cache_get_value_name(row, "name", FactionMembers[FactionIndex][row][fmName]);
+        cache_get_value_name(row, "rank_id", FactionMembers[FactionIndex][row][fmRankId]);
+        cache_get_value_name_int(row, "faction_id", FactionMembers[FactionIndex][row][fmFactionId]);
+        cache_get_value_name_int(row, "online", FactionMembers[FactionIndex][row][fmOnline]);
     }
 
     return 1;
 }
 
-static LoadFactionRanks(FactionId)
+static LoadFactionRanks(FactionIndex, FactionId)
 {
-    new query[128];
+    new query[228];
     mysql_format(MySQL_GetHandle(), query, sizeof(query), \
-        "SELECT * FROM `faction_ranks `" \
+        "SELECT * FROM `faction_ranks` " \
         "where faction_id = %d", FactionId);
 
-	mysql_tquery(MySQL_GetHandle(), query, "OnFactionRanksLoaded", "d", FactionId);
+	mysql_tquery(MySQL_GetHandle(), query, "OnFactionRanksLoaded", "d", FactionIndex);
 
     return 1;
 }
 
-forward OnFactionRanksLoaded(FactionId);
-public OnFactionRanksLoaded(FactionId)
+forward OnFactionRanksLoaded(FactionIndex);
+public OnFactionRanksLoaded(FactionIndex)
 {
     new rows;
     cache_get_row_count(rows);
@@ -116,10 +116,10 @@ public OnFactionRanksLoaded(FactionId)
     if(rows < 1) return 1;
 
     for (new row = 0; row < rows; row++) {
-        cache_get_value_name_int(row, "id", FactionRanks[FactionId][row][frId]);
-        cache_get_value_name(row, "name", FactionRanks[FactionId][row][frName]);
-        cache_get_value_name_int(row, "elevation", FactionRanks[FactionId][row][frElevation]);
-        cache_get_value_name_int(row, "faction_id", FactionRanks[FactionId][row][frFactionId]);
+        cache_get_value_name_int(row, "id", FactionRanks[FactionIndex][row][frId]);
+        cache_get_value_name(row, "name", FactionRanks[FactionIndex][row][frName]);
+        cache_get_value_name_int(row, "elevation", FactionRanks[FactionIndex][row][frElevation]);
+        cache_get_value_name_int(row, "faction_id", FactionRanks[FactionIndex][row][frFactionId]);
     }
 
     return 1;
@@ -128,7 +128,19 @@ public OnFactionRanksLoaded(FactionId)
 forward GetFactionRanks(FactionId);
 stock GetFactionRanks(FactionId)
 {
-    
+    new 
+        FactionSqlId = GetFactionSqlId(FactionId),
+        string[120],
+        stringFactionMembers[520];
+
+    for (new FactionRank = 0; FactionRank < MAX_FACTION_RANKS; FactionRank++) {
+        if (FactionRanks[FactionId][FactionRank][frFactionId] != FactionSqlId) continue;
+
+        format(string, sizeof string, "Rank Elevation: %d | Rank Name: %s\n", FactionRanks[FactionId][FactionRank][frElevation], FactionRanks[FactionId][FactionRank][frName]);
+        strcat(stringFactionMembers, string);
+    }
+
+    return stringFactionMembers;
 }
 
 forward GetFactionMembers(FactionId);
@@ -157,6 +169,18 @@ stock GetFactionsCount()
     new count = 0;
     for (new i = 0; i < MAX_FACTIONS; i++) {
         if (Factions[i][fId] == 0) continue;
+        count++;
+    }
+
+    return count;
+}
+
+forward GetFactionRanksCount(FactionId);
+stock GetFactionRanksCount(FactionId)
+{
+    new count = 0;
+    for (new i = 0; i < MAX_FACTION_RANKS; i++) {
+        if (FactionRanks[FactionId][i][frId] == 0) continue;
         count++;
     }
 
@@ -233,16 +257,16 @@ stock GetFactionRankIdByElevation(FactionId, Elevation)
 forward AddFactionMember(const PlayerName[], FactionId, Elevation);
 public AddFactionMember(const PlayerName[], FactionId, Elevation)
 {
-    new 
-        query[128],
-        RankId = GetFactionRankIdByElevation(FactionId, Elevation);
+    // new 
+    //     query[128],
+    //     RankId = GetFactionRankIdByElevation(FactionId, Elevation);
 
-    mysql_format(MySQL_GetHandle(), query, sizeof(query), \
-        "INSERT INTO `faction_members`" \
-        "(`name`, `rank_id`, `faction_id`, `online`)" \
-        "VALUES ('%s', '%d', '%d', '%d')", PlayerName, RankId, FactionId, 1);
+    // mysql_format(MySQL_GetHandle(), query, sizeof(query), \
+    //     "INSERT INTO `faction_members`" \
+    //     "(`name`, `rank_id`, `faction_id`, `online`)" \
+    //     "VALUES ('%s', '%d', '%d', '%d')", PlayerName, RankId, FactionId, 1);
 
-	mysql_tquery(MySQL_GetHandle(), query, "OnFactionRanksLoaded", "d", FactionId);
+	// mysql_tquery(MySQL_GetHandle(), query, "OnFactionRanksLoaded", "d", FactionId);
 
     return 1;
 }
