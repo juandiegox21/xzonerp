@@ -5,7 +5,7 @@
 
 CMD:cuenta(playerid, params[])
 {
-	if(!IsPlayerConnected(playerid)) return SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION] "COLOR_WHITE_INLINE" Debes estar logueado para usar este comado");
+	if(!IsPlayerConnected(playerid)) return SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION] "COLOR_WHITE_INLINE" Debes estar logueado para usar este comando");
 
     new string[153];
     format(string, sizeof string, "Faccion ID: %d | Faccion name: %s", GetPlayerFactionId(playerid), GetPlayerFactionName(playerid));
@@ -104,7 +104,7 @@ static ListHelpCommands(playerid, itemId)
         case 8:
         {
             // Player is not part of a faction
-            if (GetPlayerFactionId(playerid) == -1)
+            if (GetPlayerFactionId(playerid) < 1)
                 return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: No perteneces a una faccion.");
                 
             GetFactionCommands(playerid, GetPlayerFactionName(playerid));
