@@ -82,7 +82,7 @@ forward OnFactionRanksLoaded(FactionId);
 public OnFactionRanksLoaded(FactionId)
 {
     new 
-        rows
+        rows,
         FactionIndex = GetFactionIndexBySqlId(FactionId);
         
     cache_get_row_count(rows);
@@ -115,7 +115,7 @@ forward OnFactionMembersLoaded(FactionId);
 public OnFactionMembersLoaded(FactionId)
 {
     new 
-        rows
+        rows,
         FactionIndex = GetFactionIndexBySqlId(FactionId);
 
     cache_get_row_count(rows);
