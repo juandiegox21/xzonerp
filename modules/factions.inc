@@ -59,8 +59,8 @@ public OnFactionsLoaded()
         cache_get_value_name_int(row, "id", Factions[row][fId]);
         cache_get_value_name(row, "name", Factions[row][fName]);
 
-        LoadFactionRanks(row, Factions[row][fId]);
-        LoadFactionMembers(row, Factions[row][fId]);
+        LoadFactionRanks(Factions[row][fId]);
+        LoadFactionMembers(Factions[row][fId]);
     }
     
     return 1;
