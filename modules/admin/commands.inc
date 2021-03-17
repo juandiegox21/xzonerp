@@ -11,6 +11,20 @@ CMD:facciones(playerid, params[])
     return 1;
 }
 
+CMD:factionranks(playerid, params[])
+{
+    if(sscanf(params, "d", params[0])) return SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION] "COLOR_WHITE_INLINE"/factionranks [Faccion ID]");
+
+    new 
+        FactionString[520],
+        FactionId = params[0];
+
+    format(FactionString, sizeof FactionString, "%s", GetFactionRanks(FactionId));
+    SendClientMessage(playerid, COLOR_WHITE, FactionString);
+    
+    return 1;
+}
+
 CMD:hacerlider(playerid, params[])
 {
 	if(!IsPlayerConnected(playerid)) return SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION] "COLOR_WHITE_INLINE" Debes estar logueado para usar este comando");

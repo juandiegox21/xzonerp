@@ -59,8 +59,8 @@ public OnFactionsLoaded()
         cache_get_value_name_int(row, "id", Factions[row][fId]);
         cache_get_value_name(row, "name", Factions[row][fName]);
 
-        LoadFactionRanks(Factions[row][fId]);
-        LoadFactionMembers(Factions[row][fId]);
+        LoadFactionRanks(row, Factions[row][fId]);
+        LoadFactionMembers(row, Factions[row][fId]);
     }
     
     return 1;
@@ -101,7 +101,7 @@ public OnFactionRanksLoaded(FactionId)
 
 static LoadFactionMembers(FactionId)
 {
-    new query[128];
+    new query[228];
     mysql_format(MySQL_GetHandle(), query, sizeof(query), \
         "SELECT * FROM `faction_members `" \
         "where faction_id = %d", FactionId);
@@ -137,7 +137,19 @@ public OnFactionMembersLoaded(FactionId)
 forward GetFactionRanks(FactionId);
 stock GetFactionRanks(FactionId)
 {
-    
+    new 
+        FactionSqlId = GetFactionSqlId(FactionId),
+        string[120],
+        stringFactionMembers[520];
+
+    for (new FactionRank = 0; FactionRank < MAX_FACTION_RANKS; FactionRank++) {
+        if (FactionRanks[FactionId][FactionRank][frFactionId] != FactionSqlId) continue;
+
+        format(string, sizeof string, "Rank Elevation: %d | Rank Name: %s\n", FactionRanks[FactionId][FactionRank][frElevation], FactionRanks[FactionId][FactionRank][frName]);
+        strcat(stringFactionMembers, string);
+    }
+
+    return stringFactionMembers;
 }
 
 forward GetFactionMembers(FactionId);
@@ -166,6 +178,18 @@ stock GetFactionsCount()
     new count = 0;
     for (new i = 0; i < MAX_FACTIONS; i++) {
         if (Factions[i][fId] == 0) continue;
+        count++;
+    }
+
+    return count;
+}
+
+forward GetFactionRanksCount(FactionId);
+stock GetFactionRanksCount(FactionId)
+{
+    new count = 0;
+    for (new i = 0; i < MAX_FACTION_RANKS; i++) {
+        if (FactionRanks[FactionId][i][frId] == 0) continue;
         count++;
     }
 
@@ -215,7 +239,7 @@ public AddFactionMember(const PlayerName[], FactionId, Elevation)
         "(`name`, `faction_id`, `online`)" \
         "VALUES ('%s', '%d', '%d')", PlayerName, FactionId, 1);
 
-	mysql_tquery(MySQL_GetHandle(), query, "OnFactionRanksLoaded", "d", FactionId);
+	// mysql_tquery(MySQL_GetHandle(), query, "OnFactionRanksLoaded", "d", FactionId);
 
     return 1;
 }
