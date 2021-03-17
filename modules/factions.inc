@@ -16,7 +16,8 @@ enum E_FACTION_MEMBERS
 {
     fmId,
     fmName[42],
-    fmFactionId
+    fmFactionId,
+    fmOnline
 }
 new FactionMembers[MAX_FACTIONS][MAX_FACTION_MEMBERS][E_FACTION_MEMBERS];
 
@@ -45,7 +46,7 @@ public OnFactionsLoaded()
         cache_get_value_name_int(row, "id", Factions[row][fId]);
         cache_get_value_name(row, "name", Factions[row][fName]);
 
-        // LoadFactionMembers(Factions[row][fId]);
+        LoadFactionMembers(Factions[row][fId]);
     }
     
     return 1;
@@ -74,10 +75,32 @@ public OnFactionMembersLoaded(FactionId)
     for (new row = 0; row < rows; row++) {
         cache_get_value_name_int(row, "id", FactionMembers[FactionId][row][fmId]);
         cache_get_value_name(row, "name", FactionMembers[FactionId][row][fmName]);
-        cache_get_value_name(row, "faction_id", FactionMembers[FactionId][row][fmFactionId]);
+        cache_get_value_name_int(row, "faction_id", FactionMembers[FactionId][row][fmFactionId]);
+        cache_get_value_name_int(row, "online", FactionMembers[FactionId][row][fmOnline]);
     }
 
     return 1;
+}
+
+//@TODO
+forward GetFactionMembers(FactionId);
+stock GetFactionMembers(FactionId)
+{
+    new 
+        FactionSqlId = GetFactionSqlId(FactionId),
+        stringFactionMembers[540], 
+        string[120];
+        
+    for (new FactionMember = 0; FactionMember < MAX_FACTION_MEMBERS; FactionMember++) {
+        if (FactionMembers[FactionId][FactionMember][fmFactionId] != FactionSqlId) continue;
+    
+        new FactionMemberIsOnline[24];
+        format(FactionMemberIsOnline, sizeof FactionMemberIsOnline, "%s", (FactionMembers[FactionId][FactionMember][fmOnline]) ? "Activo" : "Desconectado");
+        format(string, sizeof string, "%s - %s\n", FactionMembers[FactionId][FactionMember][fmName], FactionMemberIsOnline);
+        strcat(stringFactionMembers, string);
+    }
+
+    return stringFactionMembers;
 }
 
 forward GetFactionsCount();
@@ -90,6 +113,12 @@ stock GetFactionsCount()
     }
 
     return count;
+}
+
+forward GetFactionSqlId(index);
+stock GetFactionSqlId(index)
+{
+    return Factions[index][fId];
 }
 
 forward GetFactionName(const FactionId);

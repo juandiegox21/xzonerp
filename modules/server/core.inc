@@ -83,7 +83,8 @@ DelayedKick(playerid, time = 500)
 	return 1;
 }
 
-ProxDetector(Float:radi, playerid, const string[],col1,col2,col3,col4,col5)
+forward ProxDetector(Float:radi, playerid, const string[],col1,col2,col3,col4,col5);
+public ProxDetector(Float:radi, playerid, const string[],col1,col2,col3,col4,col5)
 {
 	new Float:posx, Float:posy, Float:posz;
 	new Float:oldposx, Float:oldposy, Float:oldposz;
@@ -129,7 +130,8 @@ ProxDetector(Float:radi, playerid, const string[],col1,col2,col3,col4,col5)
 	return 1;
 }
 
-GetPlayersProx(Float:radi, playerid, targetid)
+forward GetPlayersProx(Float:radi, playerid, targetid);
+public GetPlayersProx(Float:radi, playerid, targetid)
 {
 	new Float:posx, Float:posy, Float:posz;
 	new Float:oldposx, Float:oldposy, Float:oldposz;
@@ -146,6 +148,7 @@ GetPlayersProx(Float:radi, playerid, targetid)
 	return 0;
 }
 
+forward GetPlayerNameRP(playerid);
 stock GetPlayerNameRP(playerid)
 {
 	new NameRP[MAX_PLAYER_NAME];
