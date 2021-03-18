@@ -2,7 +2,7 @@
 #include <YSI\y_iterate>
 
 #define MAX_FACTIONS            5
-#define MAX_FACTION_RANKS       8    
+#define MAX_FACTION_RANKS       5    
 #define MAX_FACTION_MEMBERS     30    
 
 // Factions

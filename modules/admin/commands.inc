@@ -34,8 +34,8 @@ CMD:hacerlider(playerid, params[])
         string[84],
         playerid2 = params[0],
         PlayerName[MAX_PLAYER_NAME],
-        FactionId = params[1],
-        RankElevation = 8;
+        FactionId = GetFactionSqlId(params[1]),
+        RankElevation = 5;
 
     GetPlayerName(playerid2, PlayerName, MAX_PLAYER_NAME);
 

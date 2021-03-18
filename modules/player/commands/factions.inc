@@ -2,12 +2,15 @@
 CMD:f(playerid, params[])
 {
     if(!IsPlayerConnected(playerid)) return SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION] "COLOR_WHITE_INLINE" Debes estar logueado para usar este comando");
-    if (GetPlayerFactionId(playerid) < 1)
+    
+    new PlayerFactionId = GetPlayerFactionId(playerid);
+    
+    if (PlayerFactionId < 1)
         return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: No perteneces a una faccion.");
 
     if(sscanf(params, "s[128]", params)) return SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION] "COLOR_WHITE_INLINE" /(f)accion [Texto]");
 
-    new PlayerFactionId = GetPlayerFactionId(playerid);
+    
     return SendMessageToFactionMembers(playerid, PlayerFactionId, params);
 }
 

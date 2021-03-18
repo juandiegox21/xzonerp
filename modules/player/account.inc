@@ -283,16 +283,16 @@ stock GetPlayerFactionName(playerid)
 	return FactionNameString;
 }
 
-forward SetPlayerFactionId(playerid, FactionInd);
-public SetPlayerFactionId(playerid, FactionInd)
+forward SetPlayerFactionId(playerid, const FactionId);
+public SetPlayerFactionId(playerid, const FactionId)
 {
-	if (FactionInd < -1 || (FactionInd > GetFactionsCount() - 1)) {
+	if (FactionId < 1) {
 		new string[64];
-		format(string, sizeof string, "[ATENCION] El rango de facciones es desde id -1 a id %d", GetFactionsCount() - 1);
+		format(string, sizeof string, "[ATENCION] Esta faccion no existe, intenta de nuevo");
 		return SendClientMessage(playerid, COLOR_RED, string);
 	}
-
-	Player[playerid][pFactionId] = GetFactionSqlId(FactionInd);
+	
+	Player[playerid][pFactionId] = FactionId;
     orm_save(Player[playerid][pORM_ID]);
 	return 1;
 }
