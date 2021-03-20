@@ -19,6 +19,7 @@ enum E_PLAYERS
 	pPassword[65], // the output of SHA256_PassHash function (which was added in 0.3.7 R1 version) is always 256 bytes in length, or the equivalent of 64 Pawn cells
 	pSalt[17],
 	pFactionId,
+	pFactionRankElevation,
 	pJobId,
 	Float: pPos_X,
 	Float: pPos_Y,
@@ -52,6 +53,7 @@ hook OnPlayerConnect(playerid)
 	orm_addvar_string(ormid, Player[playerid][pPassword], 65, "password");
 	orm_addvar_string(ormid, Player[playerid][pSalt], 17, "salt");
 	orm_addvar_int(ormid, Player[playerid][pFactionId], "faction_id");
+	orm_addvar_int(ormid, Player[playerid][pFactionRankElevation], "faction_rank_elevation");
 	orm_addvar_int(ormid, Player[playerid][pJobId], "job_id");
 	orm_addvar_float(ormid, Player[playerid][pPos_X], "pos_x");
 	orm_addvar_float(ormid, Player[playerid][pPos_Y], "pos_y");
@@ -249,6 +251,12 @@ public OnLoginTimeout(playerid)
 	return 1;
 }
 
+forward GetPlayerSqlId(playerid);
+stock GetPlayerSqlId(playerid)
+{
+	return Player[playerid][pId];
+}
+
 forward GetPlayerJobId(playerid);
 stock GetPlayerJobId(playerid)
 {
@@ -268,38 +276,38 @@ stock GetPlayerFactionId(playerid)
 	return Player[playerid][pFactionId];
 }
 
+forward GetPlayerFactionRankElevation(playerid);
+stock GetPlayerFactionRankElevation(playerid)
+{
+	return Player[playerid][pFactionRankElevation];
+}
+
+forward SetPlayerFactionId(playerid, FactionId);
+stock SetPlayerFactionId(playerid, FactionId)
+{
+	if (!FactionIsValid(FactionId)) return SendClientMessage(playerid, COLOR_RED, "[ATENCION] esa faccion no existe");
+
+	Player[playerid][pFactionId] = FactionId;
+	orm_save(Player[playerid][pORM_ID]);
+	return true;
+}
+
+forward SetPlayerFactionRankElevation(playerid, FactionId, Elevation);
+stock SetPlayerFactionRankElevation(playerid, FactionId, Elevation)
+{
+	if (!FactionIsValid(FactionId)) return SendClientMessage(playerid, COLOR_RED, "[ATENCION] esa faccion no existe");
+	
+	Player[playerid][pFactionRankElevation] = Elevation;
+	orm_save(Player[playerid][pORM_ID]);
+	return true;
+}
+
 forward GetPlayerFactionName(playerid);
 stock GetPlayerFactionName(playerid)
 {
 	new PlayerFactionId = GetPlayerFactionId(playerid);
 	new FactionNameString[42];
 
-	if (PlayerFactionId < 1) {
-		FactionNameString = "Civil";
-	} else {
-		FactionNameString = GetFactionName(PlayerFactionId);
-	}
-
+	FactionNameString = GetFactionName(PlayerFactionId);
 	return FactionNameString;
-}
-
-forward SetPlayerFactionId(playerid, const FactionId);
-public SetPlayerFactionId(playerid, const FactionId)
-{
-	if (FactionId < 1) {
-		new string[64];
-		format(string, sizeof string, "[ATENCION] Esta faccion no existe, intenta de nuevo");
-		return SendClientMessage(playerid, COLOR_RED, string);
-	}
-	
-	Player[playerid][pFactionId] = FactionId;
-    orm_save(Player[playerid][pORM_ID]);
-	return 1;
-}
-
-forward SetPlayerFactionRank(playerid, FactionId, RankId);
-public SetPlayerFactionRank(playerid, FactionId, RankId)
-{
-
-	return 1;
 }

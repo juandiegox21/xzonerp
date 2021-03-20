@@ -1,260 +1,140 @@
 #include <YSI_Coding\y_hooks>
-#include <YSI\y_iterate>
 
-#define MAX_FACTIONS            5
-#define MAX_FACTION_RANKS       5    
-#define MAX_FACTION_MEMBERS     30    
+#define MAX_FACTIONS                5
+#define MAX_FACTION_RANK_ELEVATION  5 // Factions can only have 5 ranks
 
 // Factions
-enum E_FACTIONS
-{
-	fId,
-	fName[42],
-};
-new Factions[MAX_FACTIONS][E_FACTIONS];
+#define FACTION_CIVIL   0
+#define FACTION_SAPD    1
+#define FACTION_MEPD    2
+#define FACTION_CNN     3
 
-// Faction Members
-enum E_FACTION_MEMBERS
-{
-    fmId,
-    fmName[42],
-    fmRankId[32],
-    fmFactionId,
-    fmOnline
-}
-new FactionMembers[MAX_FACTIONS][MAX_FACTION_MEMBERS][E_FACTION_MEMBERS];
-
-// Faction Ranks
-enum E_FACTION_RANKS
-{
-    frId,
-    frName[32],
-    frElevation,
-    frFactionId
-};
-new FactionRanks[MAX_FACTIONS][MAX_FACTION_RANKS][E_FACTION_RANKS];
-
-hook OnGameModeInit()
-{
-    LoadFactions();
-}
-
-static LoadFactions()
-{
-    new query[128];
-    mysql_format(MySQL_GetHandle(), query, sizeof(query), "SELECT * FROM `factions`");
-	mysql_tquery(MySQL_GetHandle(), query, "OnFactionsLoaded");
-    return 1;
-}
-
-forward OnFactionsLoaded();
-public OnFactionsLoaded()
-{
-    new rows;
-    cache_get_row_count(rows);
-
-    if(rows < 0) return 1;
-
-    for (new row = 0; row < rows; row++) {
-        cache_get_value_name_int(row, "id", Factions[row][fId]);
-        cache_get_value_name(row, "name", Factions[row][fName]);
-
-        LoadFactionRanks(Factions[row][fId]);
-        LoadFactionMembers(Factions[row][fId]);
-    }
-    
-    return 1;
-}
-
-static LoadFactionRanks(FactionId)
-{
-    new query[128];
-    mysql_format(MySQL_GetHandle(), query, sizeof(query), \
-        "SELECT * FROM `faction_ranks `" \
-        "where faction_id = %d", FactionId);
-
-	mysql_tquery(MySQL_GetHandle(), query, "OnFactionRanksLoaded", "d", FactionId);
-
-    return 1;
-}
-
-forward OnFactionRanksLoaded(FactionId);
-public OnFactionRanksLoaded(FactionId)
+forward GetFactions();
+stock GetFactions()
 {
     new 
-        rows,
-        FactionIndex = GetFactionIndexBySqlId(FactionId);
-        
-    cache_get_row_count(rows);
+        FactionsString[300],
+        FactionDescription[42];
 
-    if(rows < 1) return 1;
+    for (new FactionId = 0; FactionId < MAX_FACTIONS; FactionId++) {
+        new FactionName[42];
 
-    for (new row = 0; row < rows; row++) {
-        cache_get_value_name_int(row, "id", FactionRanks[FactionIndex][row][frId]);
-        cache_get_value_name(row, "name", FactionRanks[FactionIndex][row][frName]);
-        cache_get_value_name_int(row, "elevation", FactionRanks[FactionIndex][row][frElevation]);
-        cache_get_value_name_int(row, "faction_id", FactionRanks[FactionIndex][row][frFactionId]);
-    }
+        FactionName = GetFactionName(FactionId);
 
-    return 1;
-}
-
-static LoadFactionMembers(FactionId)
-{
-    new query[228];
-    mysql_format(MySQL_GetHandle(), query, sizeof(query), \
-        "SELECT * FROM `faction_members `" \
-        "where faction_id = %d", FactionId);
-
-	mysql_tquery(MySQL_GetHandle(), query, "OnFactionMembersLoaded", "d", FactionId);
-
-    return 1;
-}
-
-forward OnFactionMembersLoaded(FactionId);
-public OnFactionMembersLoaded(FactionId)
-{
-    new 
-        rows,
-        FactionIndex = GetFactionIndexBySqlId(FactionId);
-
-    cache_get_row_count(rows);
-
-    if(rows < 1) return 1;
-
-    for (new row = 0; row < rows; row++) {
-        cache_get_value_name_int(row, "id", FactionMembers[FactionIndex][row][fmId]);
-        cache_get_value_name(row, "name", FactionMembers[FactionIndex][row][fmName]);
-        cache_get_value_name(row, "rank_id", FactionMembers[FactionIndex][row][fmRankId]);
-        cache_get_value_name_int(row, "faction_id", FactionMembers[FactionIndex][row][fmFactionId]);
-        cache_get_value_name_int(row, "online", FactionMembers[FactionIndex][row][fmOnline]);
-    }
-
-    return 1;
-}
-
-//@TODO
-forward GetFactionRanks(FactionId);
-stock GetFactionRanks(FactionId)
-{
-    new 
-        FactionSqlId = GetFactionSqlId(FactionId),
-        string[120],
-        stringFactionMembers[520];
-
-    for (new FactionRank = 0; FactionRank < MAX_FACTION_RANKS; FactionRank++) {
-        if (FactionRanks[FactionId][FactionRank][frFactionId] != FactionSqlId) continue;
-
-        format(string, sizeof string, "Rank Elevation: %d | Rank Name: %s\n", FactionRanks[FactionId][FactionRank][frElevation], FactionRanks[FactionId][FactionRank][frName]);
-        strcat(stringFactionMembers, string);
-    }
-
-    return stringFactionMembers;
-}
-
-forward GetFactionMembers(FactionId);
-stock GetFactionMembers(FactionId)
-{
-    new
-        FactionIndex = GetFactionIndexBySqlId(FactionId),
-        stringFactionMembers[540], 
-        string[120];
-        
-    for (new FactionMember = 0; FactionMember < MAX_FACTION_MEMBERS; FactionMember++) {
-        if (FactionMembers[FactionIndex][FactionMember][fmFactionId] != FactionId) continue;
-    
-        new FactionMemberIsOnline[24];
-        format(FactionMemberIsOnline, sizeof FactionMemberIsOnline, "%s", (FactionMembers[FactionIndex][FactionMember][fmOnline] == 1) ? "Activo" : "Desconectado");
-        format(string, sizeof string, "%s - %s\n", FactionMembers[FactionIndex][FactionMember][fmName], FactionMemberIsOnline);
-        strcat(stringFactionMembers, string);
-    }
-
-    return stringFactionMembers;
-}
-
-forward GetFactionsCount();
-stock GetFactionsCount()
-{
-    new count = 0;
-    for (new i = 0; i < MAX_FACTIONS; i++) {
-        if (Factions[i][fId] == 0) continue;
-        count++;
-    }
-
-    return count;
-}
-
-forward GetFactionRanksCount(FactionId);
-stock GetFactionRanksCount(FactionId)
-{
-    new count = 0;
-    for (new i = 0; i < MAX_FACTION_RANKS; i++) {
-        if (FactionRanks[FactionId][i][frId] == 0) continue;
-        count++;
-    }
-
-    return count;
-}
-
-forward GetFactionSqlId(index);
-stock GetFactionSqlId(index)
-{
-    return Factions[index][fId];
-}
-
-forward GetFactionIndexBySqlId(const FactionSqlId);
-stock GetFactionIndexBySqlId(const FactionSqlId)
-{
-    new FactionIndex = -1;
-
-    for (new i = 0; i < GetFactionsCount(); i++) {
-        if (Factions[i][fId] == FactionSqlId) {
-            FactionIndex = i;
-            break;
+        if (strcmp(FactionName, "Unassigned")) {
+            format(FactionDescription, sizeof FactionDescription, "(ID: %d) %s\n", FactionId, FactionName);
+            strcat(FactionsString, FactionDescription);
         }
     }
 
-    return FactionIndex;
+    return FactionsString;
+}
+
+forward FactionIsValid(const FactionId);
+stock FactionIsValid(const FactionId)
+{
+    if (FactionId < 0 || FactionId > MAX_FACTIONS) {
+        return false;
+    }
+
+    return true;
 }
 
 forward GetFactionName(const FactionId);
 stock GetFactionName(const FactionId)
 {
-    new 
-        FactionNameString[42],
-        FactionIndex = GetFactionIndexBySqlId(FactionId);
-        
-    format(FactionNameString, sizeof(FactionNameString), "%s", Factions[FactionIndex][fName]);
-    return FactionNameString;
+    new FactionName[42];
+
+    switch (FactionId) 
+    {
+        case FACTION_CIVIL: FactionName = "Civil";
+        case FACTION_SAPD: FactionName = "Los Santos PD";
+        case FACTION_MEPD: FactionName = "Medicos";
+        case FACTION_CNN: FactionName = "CNN";
+        default: FactionName = "Unassigned";
+    }
+
+    return FactionName;
 }
 
-forward AddFactionMember(const PlayerName[], FactionId, Elevation);
-public AddFactionMember(const PlayerName[], FactionId, Elevation)
+forward GetFactionMembers(FactionId);
+stock GetFactionMembers(FactionId)
 {
     new 
-        query[128];
+        MemberDescription[48],
+        MembersList[700];
 
-    mysql_format(MySQL_GetHandle(), query, sizeof(query), \
-        "INSERT INTO `faction_members`" \
-        "(`name`, `faction_id`, `online`)" \
-        "VALUES ('%s', '%d', '%d')", PlayerName, FactionId, 1);
+    for (new i = 0; i < MAX_PLAYERS; i++) {
+        if (IsPlayerConnected(i) && GetPlayerFactionId(i) == FactionId) {
+            new MemberRankName[120];
+            MemberRankName = GetFactionRankName(FactionId, GetPlayerFactionRankElevation(i));
 
-	// mysql_tquery(MySQL_GetHandle(), query, "OnFactionRanksLoaded", "d", FactionId);
+            format(MemberDescription, sizeof MemberDescription, "%s - %s\n", GetPlayerNameRP(i), MemberRankName);
+            strcat(MembersList, MemberDescription);
+        }
+    }
 
-    return 1;
+    return MembersList;
+}
+
+forward GetFactionRankName(FactionId, Elevation);
+stock GetFactionRankName(FactionId, Elevation)
+{
+    new RankName[120];
+
+    switch (FactionId)
+    {
+        case FACTION_SAPD: {
+            switch (Elevation)
+            {
+                case 0: RankName = "Cadete";
+                case 1: RankName = "..";
+                case 2: RankName = "..";
+                case 3: RankName = "..";
+                case 4: RankName = "General";
+            }
+        }
+
+        case FACTION_MEPD: {
+            switch(Elevation)
+            {
+                case 0: RankName = "Medico";
+                case 1: RankName = "..";
+                case 2: RankName = "..";
+                case 3: RankName = "..";
+                case 4: RankName = "Doctor";
+            }
+        }
+
+        case FACTION_CNN: {
+            switch(Elevation)
+            {
+                case 0: RankName = "Reportero";
+                case 1: RankName = "..";
+                case 2: RankName = "..";
+                case 3: RankName = "..";
+                case 4: RankName = "Lider";
+            }
+        }
+
+        default: RankName = "Civil";
+    }
+
+    return RankName;
 }
 
 forward SendMessageToFactionMembers(SenderId, FactionId, const message[]);
 public SendMessageToFactionMembers(SenderId, FactionId, const message[])
 {
-    new string[220], SenderName[120];
-    SenderName = GetPlayerNameRP(SenderId);
+    new 
+        string[320], 
+        SenderElevation = GetPlayerFactionRankElevation(SenderId);
 
     for (new i = 0; i < MAX_PLAYERS; i++) {
         if(!IsPlayerConnected(i)) continue;
         else if (Player[i][pFactionId] != FactionId) continue;
-
-        format(string, sizeof(string), "[%s] %s: %s", GetFactionName(FactionId), SenderName, message);
+        
+        format(string, sizeof(string), "[%s] %s - %s: %s", GetFactionName(FactionId), GetFactionRankName(FactionId, SenderElevation), GetPlayerNameRP(SenderId), message);
         SendClientMessage(i, COLOR_DODGER_BLUE, string);
     }
 

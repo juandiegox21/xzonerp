@@ -1,49 +1,39 @@
-#include <izcmd>
-
-CMD:facciones(playerid, params[])
-{
-    new string[42];
-    for (new i = 0; i < GetFactionsCount(); i++) {
-        format(string, sizeof string, "id: %d (%d) | name: %s", i, Factions[i][fId], Factions[i][fName]);
-        SendClientMessage(playerid, COLOR_WHITE, string);
-    }
-
-    return 1;
-}
-
-CMD:factionranks(playerid, params[])
-{
-    if(sscanf(params, "d", params[0])) return SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION] "COLOR_WHITE_INLINE"/factionranks [Faccion ID]");
-
-    new 
-        FactionString[520],
-        FactionId = params[0];
-
-    format(FactionString, sizeof FactionString, "%s", GetFactionRanks(FactionId));
-    SendClientMessage(playerid, COLOR_WHITE, FactionString);
-    
-    return 1;
-}
-
 CMD:hacerlider(playerid, params[])
 {
 	if(!IsPlayerConnected(playerid)) return SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION] "COLOR_WHITE_INLINE" Debes estar logueado para usar este comando");
-    if(sscanf(params, "dd", params[0], params[1])) return SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION] "COLOR_WHITE_INLINE"/hacerlider [ID][Faccion ID]");
+    if(sscanf(params, "d", params[0])) return SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION] "COLOR_WHITE_INLINE"/hacerlider [ID]");
     
-    new 
-        string[84],
-        playerid2 = params[0],
-        PlayerName[MAX_PLAYER_NAME],
-        FactionId = GetFactionSqlId(params[1]),
-        RankElevation = 5;
+    new
+        playerid2 = params[0];
 
-    GetPlayerName(playerid2, PlayerName, MAX_PLAYER_NAME);
+    inline DialogAvailableFactions(id, dialogid, response, listitem, string: inputtext[]) {
+        #pragma unused id, dialogid, inputtext
 
-    SetPlayerFactionId(playerid2, FactionId);
+        if (!response)
+            return 1;
 
-    format(string, sizeof string, "[ATENCION] Ahora eres miembro de la faccion: %s", GetFactionName(FactionId));
-    SendClientMessage(playerid2, COLOR_DODGER_BLUE, string);
+        new 
+            string[120],
+            FactionId = listitem,
+            Elevation = 4; // MAX elevation
+            
+        SetPlayerFactionId(playerid2, FactionId);
 
-    AddFactionMember(PlayerName, FactionId, RankElevation);
+        format(string, sizeof string, "[ATENCION] Ahora eres miembro de la faccion: %s", GetFactionName(FactionId));
+        SendClientMessage(playerid2, COLOR_DODGER_BLUE, string);
+
+        // Only advise of promoted rank when the faction is not CIVIL
+        if (FactionId > 0) {
+            SetPlayerFactionRankElevation(playerid2, FactionId, Elevation);
+
+            format(string, sizeof string, "[ATENCION] Has sido promovido a rango %s", GetFactionRankName(FactionId, Elevation));
+            SendClientMessage(playerid, COLOR_DODGER_BLUE, string);
+        }
+    }
+
+    new DialogTitleString[120];
+    format(DialogTitleString, sizeof DialogTitleString, "De que faccion %s sera lider?", GetPlayerNameRP(playerid2));
+    Dialog_ShowCallback(playerid, using inline DialogAvailableFactions, DIALOG_STYLE_LIST, DialogTitleString, GetFactions(), "Asignar", "Cancelar");
+
     return 1;
 }
