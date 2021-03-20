@@ -27,20 +27,24 @@
 #include <weaponskill>
 #include <protection>
 
+#include <izcmd>
+
 // Server
 #include "../modules/server/time.inc"
 #include "../modules/server/core.inc"
 #include "../modules/server/cmd_process.inc"
 #include "../modules/server/mysql.inc" // MySQL connection
 
-// Player
+// Player 
 #include "../modules/player/account.inc"
-#include "../modules/player/commands.inc"
 
 // Factions
 #include "../modules/factions.inc"
 
-// Admin
+// Player commands
+#include "../modules/player/commands.inc" // Chat 
+
+// Admin commands
 #include "../modules/admin/commands.inc"
 
 // World
