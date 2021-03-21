@@ -77,6 +77,21 @@ stock GetFactionMembers(FactionId)
     return MembersList;
 }
 
+forward GetFactionRanksName(FactionId);
+stock GetFactionRanksName(FactionId)
+{
+    new 
+        FactionRanksNameString[300],
+        FactionRankName[42];
+
+    for (new RankElevation = 0; RankElevation < MAX_FACTION_RANK_ELEVATION; RankElevation++) {
+        format(FactionRankName, sizeof FactionRankName, "(Nivel de privilegio: %d) %s\n", RankElevation, GetFactionRankName(FactionId, RankElevation));
+        strcat(FactionRanksNameString, FactionRankName);
+    }
+
+    return FactionRanksNameString;
+}
+
 forward GetFactionRankName(FactionId, Elevation);
 stock GetFactionRankName(FactionId, Elevation)
 {
