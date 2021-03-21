@@ -37,6 +37,8 @@ new g_MysqlRaceCheck[MAX_PLAYERS];
 
 hook OnPlayerConnect(playerid)
 {
+	SetPlayerColor(playerid, COLOR_WHITE_TRANSPARENT);
+
 	g_MysqlRaceCheck[playerid]++;
 
     // reset player data

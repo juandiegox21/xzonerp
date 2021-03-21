@@ -13,7 +13,7 @@ CMD:hacerlider(playerid, params[])
             return 1;
 
         new 
-            string[120],
+            string[140],
             FactionId = listitem,
             Elevation = 4; // MAX elevation
             
@@ -27,8 +27,11 @@ CMD:hacerlider(playerid, params[])
             SetPlayerFactionRankElevation(playerid2, Elevation);
 
             format(string, sizeof string, "[ATENCION] Has sido promovido a rango %s", GetFactionRankName(FactionId, Elevation));
-            SendClientMessage(playerid, COLOR_DODGER_BLUE, string);
+            SendClientMessage(playerid2, COLOR_DODGER_BLUE, string);
         }
+
+        format(string, sizeof string, "[ATENCION] Has hecho lider a %s de la faccion %s", GetPlayerNameRP(playerid2), GetFactionName(FactionId));
+        SendClientMessage(playerid, COLOR_DODGER_BLUE, string);
     }
 
     new DialogTitleString[120];

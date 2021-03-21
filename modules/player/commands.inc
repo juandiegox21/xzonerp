@@ -161,8 +161,13 @@ CMD:aceptar(playerid, params[])
         new 
             FactionRecruitingId = GetPVarInt(playerid, "FactionRecruitingId");
 
-        if (FactionRecruitingId == 0) return SendClientMessage(playerid, COLOR_RED, "[ATENCION] Nadie te ha ofrecido formar parte de su faccion");
-		if(!GetPlayersProx(5.0, playerid, GetPVarInt(playerid, "FactionRecruitingLeaderId"))) {
+        if (FactionRecruitingId == 0)
+            return SendClientMessage(playerid, COLOR_RED, "[ATENCION] Nadie te ha ofrecido formar parte de su faccion");
+        
+        else if (GetPlayerFactionId(playerid) != FACTION_CIVIL)
+            return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: Ya perteneces a una faccion, renuncia a tu faccion antes de aceptar una nueva invitacion.");
+
+		else if(!GetPlayersProx(5.0, playerid, GetPVarInt(playerid, "FactionRecruitingLeaderId"))) {
             return SendClientMessage(playerid, COLOR_RED, "[ATENCION] La persona que te invito a su faccion esta muy lejos de ti.");
         }
 
@@ -173,11 +178,52 @@ CMD:aceptar(playerid, params[])
         format(string, sizeof string, "[ATENCION] Ahora eres miembro de la faccion: %s", GetFactionName(FactionRecruitingId));
         SendClientMessage(playerid, COLOR_DODGER_BLUE, string);
 
+        format(string, sizeof string, "[%s] %s se ha unido", GetFactionName(FactionRecruitingId), GetPlayerNameRP(playerid));
+        SendMessageToFactionMembers(playerid, FactionRecruitingId, string);
+
         DeletePVar(playerid, "FactionRecruitingId");
         DeletePVar(playerid, "FactionRecruitingLeaderId");
     }
     else {
         SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION] "COLOR_WHITE_INLINE" /aceptar [opcion]");
+        SendClientMessage(playerid, COLOR_ORANGE, "[OPCIONES] > "COLOR_WHITE_INLINE" faccion");
+    }
+
+    return 1;
+}
+
+CMD:rechazar(playerid, params[])
+{
+    if(!IsPlayerConnected(playerid)) return SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION] "COLOR_WHITE_INLINE" Debes estar logueado para usar este comando");
+    
+    if(sscanf(params, "s[32]", params)) {
+        SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION] "COLOR_WHITE_INLINE" /rechazar [opcion]");
+        SendClientMessage(playerid, COLOR_ORANGE, "[OPCIONES] > "COLOR_WHITE_INLINE" faccion");
+		return 1;
+	}
+
+    if(!strcmp(params, "faccion", true, 7)) {
+        new 
+            FactionRecruitingId = GetPVarInt(playerid, "FactionRecruitingId"),
+            FactionRecruitingLeaderId = GetPVarInt(playerid, "FactionRecruitingLeaderId");
+
+        if (FactionRecruitingId == 0) return SendClientMessage(playerid, COLOR_RED, "[ATENCION] Nadie te ha ofrecido formar parte de su faccion");
+		if(!GetPlayersProx(5.0, playerid, FactionRecruitingLeaderId)) {
+            return SendClientMessage(playerid, COLOR_RED, "[ATENCION] La persona que te invito a su faccion esta muy lejos de ti.");
+        }
+
+        new string[120];
+        format(string, sizeof string, "[FACCIONES] %s ha rechazado unirse a tu faccion", GetPlayerNameRP(playerid));
+        SendClientMessage(FactionRecruitingLeaderId, COLOR_DODGER_BLUE, string);
+
+        format(string, sizeof string, "[ATENCION] Has rechazado unirte a %s", GetFactionName(FactionRecruitingId));
+        SendClientMessage(playerid, COLOR_DODGER_BLUE, string);
+
+        DeletePVar(playerid, "FactionRecruitingId");
+        DeletePVar(playerid, "FactionRecruitingLeaderId");
+    }
+    else {
+        SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION] "COLOR_WHITE_INLINE" /rechazar [opcion]");
         SendClientMessage(playerid, COLOR_ORANGE, "[OPCIONES] > "COLOR_WHITE_INLINE" faccion");
     }
 
@@ -350,19 +396,29 @@ CMD:finvitar(playerid, params[])
     new playerid2 = params[0];
 
     if (playerid2 == playerid)
-        return SendClientMessage(playerid, COLOR_RED, "[ATENCION] "COLOR_WHITE_INLINE" No puedes invitarte a ti mismo."); 
+        return SendClientMessage(playerid, COLOR_RED, "[ATENCION] No puedes invitarte a ti mismo."); 
 
     else if(!IsPlayerConnected(playerid2)) 
-        return SendClientMessage(playerid, COLOR_RED, "[ATENCION] "COLOR_WHITE_INLINE" Este jugador no esta en linea.");
+        return SendClientMessage(playerid, COLOR_RED, "[ATENCION] Este jugador no esta en linea.");
+
+    else if(!GetPlayersProx(5.0, playerid, playerid2))
+        return SendClientMessage(playerid, COLOR_RED, "[ATENCION] La persona a la que quieres invitar esta muy lejos de ti.");
     
     else if (GetPlayerFactionId(playerid2) != FACTION_CIVIL)
         return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: Este jugador ya pertenece a una faccion.");
+
+    else if (GetPVarInt(playerid2, "FactionRecruitingId") > 0)
+        return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: Este jugador ya ha sido invitado a una faccion.");
     
     new string [320];
+
+    format(string, sizeof string, "[FACCIONES] Has invitado a %s a tu faccion", GetPlayerNameRP(playerid2));
+    SendClientMessage(playerid, COLOR_DODGER_BLUE, string);
+
     format(string, sizeof string, "[FACCIONES] %s desea reclutarte para %s", GetPlayerNameRP(playerid), GetFactionName(PlayerFactionId));
     SendClientMessage(playerid2, COLOR_DODGER_BLUE, string);
 
-    SendClientMessage(playerid2, COLOR_ORANGE, "[ATENCION] "COLOR_WHITE_INLINE" para aceptar escribe /aceptar faccion (tienes 2 minutos para aceptar)");
+    SendClientMessage(playerid2, COLOR_ORANGE, "[ATENCION] "COLOR_WHITE_INLINE" para aceptar escribe "COLOR_ORANGE_INLINE" /aceptar faccion "COLOR_WHITE_INLINE" o para rechazar "COLOR_ORANGE_INLINE" /rechazar faccion");
 
     SetPVarInt(playerid2, "FactionRecruitingId", PlayerFactionId);
     SetPVarInt(playerid2, "FactionRecruitingLeaderId", playerid);
@@ -389,9 +445,15 @@ CMD:fpromover(playerid, params[])
     new playerid2 = params[0];
 
     if (playerid2 == playerid)
-        return SendClientMessage(playerid, COLOR_RED, "[ATENCION] "COLOR_WHITE_INLINE" No puedes promoverte a ti mismo."); 
+        return SendClientMessage(playerid, COLOR_RED, "[ATENCION] No puedes promoverte a ti mismo."); 
 
-    if(!GetPlayersProx(5.0, playerid, playerid2))
+    else if(!IsPlayerConnected(playerid2)) 
+        return SendClientMessage(playerid, COLOR_RED, "[ATENCION] Este jugador no esta en linea.");
+
+    else if (GetPlayerFactionId(playerid2) != PlayerFactionId)
+        return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: Este jugador no pertenece a esta faccion.");
+
+    else if(!GetPlayersProx(5.0, playerid, playerid2))
         return SendClientMessage(playerid, COLOR_RED, "[ATENCION] La persona a la que quieres promover esta muy lejos de ti.");
 
     inline DialogPromoteFactionMember(id, dialogid, response, listitem, string: inputtext[]) {
@@ -403,7 +465,7 @@ CMD:fpromover(playerid, params[])
             string[220],
             RankElevation = listitem;
 
-        SetPlayerFactionRankElevation(playerid, RankElevation);
+        SetPlayerFactionRankElevation(playerid2, RankElevation);
 
         format(string, sizeof string, "[FACCIONES] %s te ha promovido a rango %s", GetPlayerNameRP(playerid), GetFactionRankName(PlayerFactionId, RankElevation));
         SendClientMessage(playerid2, COLOR_DODGER_BLUE, string);
@@ -415,6 +477,58 @@ CMD:fpromover(playerid, params[])
     new DialogTitleString[120];
     format(DialogTitleString, sizeof DialogTitleString, "A que rango quieres promover a %s?", GetPlayerNameRP(playerid2));
     Dialog_ShowCallback(playerid, using inline DialogPromoteFactionMember, DIALOG_STYLE_LIST, DialogTitleString, GetFactionRanksName(PlayerFactionId), "Promover", "Cancelar");
+    return 1;
+}
+
+CMD:fexpulsar(playerid, params[])
+{
+    if(!IsPlayerConnected(playerid)) return SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION] "COLOR_WHITE_INLINE" Debes estar logueado para usar este comando");
+    
+    else if (GetPlayerFactionId(playerid) < 1)
+        return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: No perteneces a una faccion.");
+    
+    else if (GetPlayerFactionRankElevation(playerid) < 3)
+        return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: No tienes permisos para expulsar a un jugador.");
+
+    if(sscanf(params, "i", params[0]))
+        return SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION] "COLOR_WHITE_INLINE" /fexpulsar [ID]");
+
+    new 
+        playerid2 = params[0],
+        PlayerFactionId = GetPlayerFactionId(playerid);
+
+    if (playerid2 == playerid)
+        return SendClientMessage(playerid, COLOR_RED, "[ATENCION] No te puedes expulsar a ti mismo."); 
+
+    else if(!IsPlayerConnected(playerid2)) 
+        return SendClientMessage(playerid, COLOR_RED, "[ATENCION] Este jugador no esta en linea.");
+
+    else if (GetPlayerFactionId(playerid2) != PlayerFactionId)
+        return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: Este jugador no pertenece a esta faccion.");
+
+    else if (GetPlayerFactionRankElevation(playerid2) > GetPlayerFactionRankElevation(playerid))
+        return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: No puedes expulsar a alguien con mas rango");
+
+    inline DialogKickMemberFromFaction(id, dialogid, response, listitem, string: inputtext[]) {
+        #pragma unused id, dialogid, listitem, inputtext
+        if (!response)
+            return 1;
+
+        new 
+            string[220],
+            PlayerFactionRankElevation = GetPlayerFactionRankElevation(playerid2);
+
+        SetPlayerFactionId(playerid2, 0);
+        SendClientMessage(playerid2, COLOR_DODGER_BLUE, "[FACCIONES] Has sido expulsado de tu faccion");
+
+        format(string, sizeof string, "[%s] (%s) %s ha sido expulsado", GetFactionName(PlayerFactionId), GetFactionRankName(PlayerFactionId, PlayerFactionRankElevation), GetPlayerNameRP(playerid2));
+        SendMessageToFactionMembers(playerid, PlayerFactionId, string);
+    }
+
+    new KickMemberConfirmationString[120];
+    
+    format(KickMemberConfirmationString, sizeof KickMemberConfirmationString, "Estas seguro que quieres expulsar a %s de tu faccion?", GetPlayerNameRP(playerid2));
+    Dialog_ShowCallback(playerid, using inline DialogKickMemberFromFaction, DIALOG_STYLE_MSGBOX, GetFactionName(PlayerFactionId), KickMemberConfirmationString, "Expulsar", "Cancelar");
     return 1;
 }
 
