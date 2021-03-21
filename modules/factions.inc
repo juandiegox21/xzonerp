@@ -77,6 +77,21 @@ stock GetFactionMembers(FactionId)
     return MembersList;
 }
 
+forward GetFactionRanksName(FactionId);
+stock GetFactionRanksName(FactionId)
+{
+    new 
+        FactionRanksNameString[300],
+        FactionRankName[42];
+
+    for (new RankElevation = 0; RankElevation < MAX_FACTION_RANK_ELEVATION; RankElevation++) {
+        format(FactionRankName, sizeof FactionRankName, "(Nivel de privilegio: %d) %s\n", RankElevation, GetFactionRankName(FactionId, RankElevation));
+        strcat(FactionRanksNameString, FactionRankName);
+    }
+
+    return FactionRanksNameString;
+}
+
 forward GetFactionRankName(FactionId, Elevation);
 stock GetFactionRankName(FactionId, Elevation)
 {
@@ -123,20 +138,27 @@ stock GetFactionRankName(FactionId, Elevation)
     return RankName;
 }
 
+forward IsFactionCivil(FactionId);
+stock IsFactionCivil(FactionId)
+{
+    return FactionId == FACTION_CIVIL;
+}
+
 forward SendMessageToFactionMembers(SenderId, FactionId, const message[]);
 public SendMessageToFactionMembers(SenderId, FactionId, const message[])
 {
     new 
-        string[320], 
-        SenderElevation = GetPlayerFactionRankElevation(SenderId);
+        string[320];
 
     for (new i = 0; i < MAX_PLAYERS; i++) {
         if(!IsPlayerConnected(i)) continue;
         else if (Player[i][pFactionId] != FactionId) continue;
         
-        format(string, sizeof(string), "[%s] %s - %s: %s", GetFactionName(FactionId), GetFactionRankName(FactionId, SenderElevation), GetPlayerNameRP(SenderId), message);
+        format(string, sizeof(string), "%s", message);
         SendClientMessage(i, COLOR_DODGER_BLUE, string);
     }
+
+    printf("[FACCIONES] %s", message);
 
     return 1;
 }

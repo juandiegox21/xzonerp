@@ -288,15 +288,19 @@ stock SetPlayerFactionId(playerid, FactionId)
 	if (!FactionIsValid(FactionId)) return SendClientMessage(playerid, COLOR_RED, "[ATENCION] esa faccion no existe");
 
 	Player[playerid][pFactionId] = FactionId;
+
+	// Reset rank if faction was set to civil
+	if (IsFactionCivil(FactionId)) {
+		Player[playerid][pFactionRankElevation] = 0;
+	}
+
 	orm_save(Player[playerid][pORM_ID]);
 	return true;
 }
 
-forward SetPlayerFactionRankElevation(playerid, FactionId, Elevation);
-stock SetPlayerFactionRankElevation(playerid, FactionId, Elevation)
+forward SetPlayerFactionRankElevation(playerid, Elevation);
+stock SetPlayerFactionRankElevation(playerid, Elevation)
 {
-	if (!FactionIsValid(FactionId)) return SendClientMessage(playerid, COLOR_RED, "[ATENCION] esa faccion no existe");
-	
 	Player[playerid][pFactionRankElevation] = Elevation;
 	orm_save(Player[playerid][pORM_ID]);
 	return true;
@@ -310,4 +314,10 @@ stock GetPlayerFactionName(playerid)
 
 	FactionNameString = GetFactionName(PlayerFactionId);
 	return FactionNameString;
+}
+
+forward PlayerIsFactionLeader(playerid);
+stock PlayerIsFactionLeader(playerid)
+{
+	return GetPlayerFactionRankElevation(playerid) == 4;
 }
