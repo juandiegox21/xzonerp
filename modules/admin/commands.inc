@@ -22,9 +22,9 @@ CMD:hacerlider(playerid, params[])
         format(string, sizeof string, "[ATENCION] Ahora eres miembro de la faccion: %s", GetFactionName(FactionId));
         SendClientMessage(playerid2, COLOR_DODGER_BLUE, string);
 
-        // Only advise of promoted rank when the faction is not CIVIL
+        // Only promote rank when the faction is not CIVIL
         if (FactionId > 0) {
-            SetPlayerFactionRankElevation(playerid2, FactionId, Elevation);
+            SetPlayerFactionRankElevation(playerid2, Elevation);
 
             format(string, sizeof string, "[ATENCION] Has sido promovido a rango %s", GetFactionRankName(FactionId, Elevation));
             SendClientMessage(playerid, COLOR_DODGER_BLUE, string);
