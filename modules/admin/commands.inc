@@ -40,3 +40,19 @@ CMD:hacerlider(playerid, params[])
 
     return 1;
 }
+
+CMD:gotocor(playerid, params[])
+{
+	new 
+        Float: pos[3], 
+        int;
+
+    if(sscanf(params, "fffd", pos[0], pos[1], pos[2], int))
+        return SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION]: "COLOR_WHITE_INLINE" /gotocor [coordenada X] [coordenada Y] [coordenada Z] [interior]");
+    
+    SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION]: "COLOR_WHITE_INLINE" Fuiste teletransportado a las coordenadas establecidas.");
+    SetPlayerPos(playerid, pos[0], pos[1], pos[2]);
+    SetPlayerInterior(playerid, int);
+    
+	return 1;
+}

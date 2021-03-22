@@ -50,6 +50,9 @@
 // World
 #include "../modules/world/maps.inc"
 
+// Vehicles
+#include "../modules/vehicles.inc"
+
 //Gamemode
 main()
 {

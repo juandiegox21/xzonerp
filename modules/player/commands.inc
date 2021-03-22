@@ -532,6 +532,17 @@ CMD:fexpulsar(playerid, params[])
     return 1;
 }
 
+/* ------------- VEHICLES ------------------ */
+
+CMD:motor(playerid,params[])
+{
+	if(GetPlayerState(playerid) != PLAYER_STATE_DRIVER) return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: No estas en un vehiculo como conductor.");
+	new CarId = GetPlayerVehicleID(playerid);
+	if(IsABike(CarId)) return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: Este vehiculo no tiene motor.");
+    
+	AttemptToTurnVehicleEngineOn(playerid, CarId);
+	return 1;
+}
 
 /* ------------- TIMERS ------------------ */
 
