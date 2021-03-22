@@ -38,9 +38,23 @@ hook OnGameModeInit()
 }
 
 // @TODO when we add personal vehicles add functionality to verify access to the car
-forward AttemptToTurnVehicleEngineOn(playerid, CarId);
-stock AttemptToTurnVehicleEngineOn(playerid, CarId)
+forward AttemptToTurnVehicleEngineOn(playerid, vehicleid);
+stock AttemptToTurnVehicleEngineOn(playerid, vehicleid)
 {
+	if (IsVehiclePublic(vehicleid) && isVehicleFaction(vehicleid)) {
+		if (!PlayerCanUseVehicleFaction(playerid, vehicleid)) {
+			return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: No tienes las llaves de este vehiculo");
+		}
+	}
+
+	else if (IsVehicleJob(vehicleid)) {
+		// Add conditions for job vehicles
+	}
+
+	else {
+    	// Add conditions for personal vehicles
+	}
+
 	new 
         engine,
         lights,
@@ -52,50 +66,58 @@ stock AttemptToTurnVehicleEngineOn(playerid, CarId)
         Float:CarHealth,
         string[128];
 
-	GetVehicleParamsEx(CarId, engine, lights, alarm, doors, bonnet, boot, objective);
+	GetVehicleParamsEx(vehicleid, engine, lights, alarm, doors, bonnet, boot, objective);
 
     // If the vehicle is on turn it off
 	if (engine == 1) {
 		format(string, sizeof(string), "* %s apaga el motor de su vehiculo.", GetPlayerNameRP(playerid));
 		ProxDetector(15.0, playerid, string, COLOR_PURPLE, COLOR_PURPLE, COLOR_PURPLE, COLOR_PURPLE, COLOR_PURPLE);
-		SetVehicleParamsEx(CarId, 0, lights, alarm, doors, bonnet, boot, objective);
+		SetVehicleParamsEx(vehicleid, 0, lights, alarm, doors, bonnet, boot, objective);
 		return 1;
 	}
 
-	GetVehicleHealth(CarId, CarHealth);
+	GetVehicleHealth(vehicleid, CarHealth);
     
     if (CarHealth < MIN_CAR_HEALTH)
-        return SendClientMessage(playerid, COLOR_WHITE, "[ATENCION]: No puedes encender el vehiculo, el motor esta demasiado dañado.");
+        return SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION]: "COLOR_WHITE_INLINE" No puedes encender el vehiculo, el motor esta demasiado dañado.");
     
     else if (GetPVarInt(playerid, "TurningEngineOn") != 0)
         return 1;
 
-    else if (IsVehiclePublic(CarId))
-    {
-        if (!PlayerCanUseVehicleFromFaction(playerid, CarId))
-            return 1;
+	format(string, sizeof(string), "* %s mete la llave en el contacto y lo gira.", GetPlayerNameRP(playerid));
+	ProxDetector(15.0, playerid, string, COLOR_PURPLE, COLOR_PURPLE, COLOR_PURPLE, COLOR_PURPLE, COLOR_PURPLE);
 
-        format(string, sizeof(string), "* %s mete la llave en el contacto y lo gira.", GetPlayerNameRP(playerid));
-        ProxDetector(15.0, playerid, string, COLOR_PURPLE, COLOR_PURPLE, COLOR_PURPLE, COLOR_PURPLE, COLOR_PURPLE);
-
-        SetPVarInt(playerid, "TurningEngineOn", 1);
-        defer TurnVehicleEngineOn(playerid, CarId);
-        return 1;
-    }
-    
-    // Add stuff for personal vehicles
-
+	SetPVarInt(playerid, "TurningEngineOn", 1);
+	defer TurnVehicleEngineOn(playerid, vehicleid);
 	return 1;
 }
 
-forward IsVehiclePublic(CarId);
-stock IsVehiclePublic(CarId)
+forward IsVehiclePublic(vehicleid);
+stock IsVehiclePublic(vehicleid)
 {
-    return CarId <= MAX_CAR_PUBLIC;
+    return vehicleid <= MAX_CAR_PUBLIC;
 }
 
-forward PlayerCanUseVehicleFromFaction(playerid, vehicleid);
-stock PlayerCanUseVehicleFromFaction(playerid, vehicleid)
+forward IsVehicleFaction(vehicleid);
+stock isVehicleFaction(vehicleid)
+{
+	if(IsCarSapd(vehicleid))
+        return true;
+    
+    return false;
+}
+
+
+// @TODO
+forward IsVehicleJob(vehicleid);
+stock IsVehicleJob(vehicleid)
+{
+	printf("%d", vehicleid);
+    return false;
+}
+
+forward PlayerCanUseVehicleFaction(playerid, vehicleid);
+stock PlayerCanUseVehicleFaction(playerid, vehicleid)
 {
 	if(IsCarSapd(vehicleid) && GetPlayerFactionId(playerid) == FACTION_SAPD)
         return true;
@@ -103,10 +125,10 @@ stock PlayerCanUseVehicleFromFaction(playerid, vehicleid)
     return false;
 }
 
-forward IsCarSapd(carid);
-stock IsCarSapd(carid)
+forward IsCarSapd(vehicleid);
+stock IsCarSapd(vehicleid)
 {
-	if(carid >= 1 && carid <= 50)
+	if(vehicleid >= 1 && vehicleid <= 50)
         return 1;
 
 	return 0;
@@ -115,7 +137,7 @@ stock IsCarSapd(carid)
 /* ------------- TIMERS ------------------ */
 
 // VEHICLES 2 Seconds
-timer TurnVehicleEngineOn[2000](playerid, CarId)
+timer TurnVehicleEngineOn[2000](playerid, vehicleid)
 {
     new string[128];
 	format(string, sizeof(string), "* %s enciende el motor de su vehiculo.", GetPlayerNameRP(playerid));
@@ -130,18 +152,18 @@ timer TurnVehicleEngineOn[2000](playerid, CarId)
         boot,
         objective;
 
-	GetVehicleParamsEx(CarId, engine, lights, alarm, doors, bonnet, boot, objective);
-	SetVehicleParamsEx(CarId, 1, lights, alarm, doors, bonnet, boot, objective);
+	GetVehicleParamsEx(vehicleid, engine, lights, alarm, doors, bonnet, boot, objective);
+	SetVehicleParamsEx(vehicleid, 1, lights, alarm, doors, bonnet, boot, objective);
 
     DeletePVar(playerid, "TurningEngineOn");
 
     return 1;
 }
 
-forward IsABike(CarId);
-stock IsABike(CarId)
+forward IsABike(vehicleid);
+stock IsABike(vehicleid)
 {
-	new VehicleModel = GetVehicleModel(CarId);
+	new VehicleModel = GetVehicleModel(vehicleid);
 
 	if(VehicleModel == 510 || VehicleModel == 481 || VehicleModel == 509)
 		return true;
