@@ -1,43 +1,145 @@
 #include <YSI_Coding\y_hooks>
 
+#define VEHICLE_RESPAWN_DELAY 3600 // 1h
+
+enum e_VehicleData
+{
+	e_VehicleId,
+	e_VehicleFactionId,
+	e_VehicleModel,
+	Float:e_VehiclePos[4], // X, Y, Z, Angle
+	e_VehicleColor[2], // Color 1, Color 2
+};
+
+static const g_arrVehicleData[][e_VehicleData] =
+{
+	// ================== SAPD ==================
+		// Police Car
+		{
+			-1, FACTION_SAPD, 596, {1545.5494, -1651.0291, 5.7106, 90.00}, {0, 1}
+		},
+		{
+			-1, FACTION_SAPD, 596, {1545.5494, -1655.0783, 5.7106, 90.00}, {0, 1}
+		},
+		{
+			-1, FACTION_SAPD, 596, {1545.5494, -1659.0273, 5.7106, 90.00}, {0, 1}
+		},
+		{
+			-1, FACTION_SAPD, 596, {1545.5494, -1663.0397, 5.7106, 90.00}, {0, 1}
+		},
+		{
+			-1, FACTION_SAPD, 596, {1545.5494, -1667.8980, 5.7106, 90.00}, {0, 1}
+		},
+		{
+			-1, FACTION_SAPD, 596, {1545.5494, -1671.9782, 5.7106, 90.00}, {0, 1}
+		},
+		{
+			-1, FACTION_SAPD, 596, {1545.5494, -1676.0792, 5.7106, 90.00}, {0, 1}
+		},
+		{
+			-1, FACTION_SAPD, 596, {1545.5494, -1684.3708, 5.7401, 90.00}, {0, 1}
+		},
+		{
+			-1, FACTION_SAPD, 596, {1545.5494, -1680.2238, 5.7401, 90.00}, {0, 1}
+		},
+		{
+			-1, FACTION_SAPD, 596, {1526.4957, -1643.9830, 6.2757, 180.00}, {0, 1}
+		},
+		{
+			-1, FACTION_SAPD, 596, {1530.4660, -1643.9830, 6.2757, 180.00}, {0, 1}
+		},
+		{
+			-1, FACTION_SAPD, 596, {1534.69177246, -1643.9830, 6.2757, 180.00}, {0, 1}
+		},
+		{
+			-1, FACTION_SAPD, 596, {1538.7166, -1643.9830, 6.2757, 180.00}, {0, 1}
+		},
+		{
+			-1, FACTION_SAPD, 596, {1528.7050, -1688.0760, 5.6593, 270.00}, {0, 1}
+		},
+		{
+			-1, FACTION_SAPD, 596, {1528.7050, -1683.9211, 5.6593, 270.00}, {0, 1}
+		},
+		// Police Ranger
+		{
+			-1, FACTION_SAPD, 599, {1602.6211, -1691.9659, 6.0790, 90.00}, {0, 1}
+		},
+		{
+			-1, FACTION_SAPD, 599, {1602.6211, -1687.8544, 6.1430, 90.00}, {0, 1}
+		},
+		{
+			-1, FACTION_SAPD, 599, {1602.6211, -1683.9187, 6.1060, 90.00}, {0, 1}
+		},
+		{
+			-1, FACTION_SAPD, 599, {1602.6211, -1696.0380, 6.1060, 90.00}, {0, 1}
+		},
+		// Tow Truck
+		{
+			-1, FACTION_SAPD, 525, {1591.4323, -1711.0713, 5.7688, 0.00}, {0, 1}
+		},
+		{
+			-1, FACTION_SAPD, 525, {1595.4498, -1711.0713, 5.7680, 0.00}, {0, 1}
+		},
+		// HPV1000
+		{
+			-1, FACTION_SAPD, 523, {1557.4336, -1710.5233, 5.4525, 0.00}, {0, 1}
+		},
+		{
+			-1, FACTION_SAPD, 523, {1559.8743, -1710.5233, 5.4525, 0.00}, {0, 1}
+		},
+		{
+			-1, FACTION_SAPD, 523, {1562.3150, -1710.5233, 5.4525, 0.00}, {0, 1}
+		},
+		{
+			-1, FACTION_SAPD, 523, {1564.7557, -1710.5233, 5.4525, 0.00}, {0, 1}
+		},
+		{
+			-1, FACTION_SAPD, 523, {1567.1964, -1710.5233, 5.4525, 0.00}, {0, 1}
+		},
+		{
+			-1, FACTION_SAPD, 523, {1569.6371, -1710.5233, 5.4525, 0.00}, {0, 1}
+		},
+		// Police Maverick
+		{
+			-1, FACTION_SAPD, 497, {1566.5000, -1708.0600, 28.7000,	90.00}, {0, 1}
+		},
+		{
+			-1, FACTION_SAPD, 497, {1569.6999, -1652.8000, 28.7000, 0.00}, {0, 1}
+		},
+		{
+			-1, FACTION_SAPD, 497, {1566.4906, -1694.0710, 28.6254, 90.00}, {0, 1}
+		},
+		{
+			-1, FACTION_MEPD, 416, {1576.6371, -1710.5233, 5.4525, 0.00}, {0, 1}
+		}
+};
+
 hook OnGameModeInit()
 {
-    /* ------------------ LSPD ------------------*/
-	AddStaticVehicleEx(596,1545.54943848,-1651.02917480,5.71062469,90.00000000,0,0,3600); //Police Car (LSPD) 15
-	AddStaticVehicleEx(596,1545.54943848,-1655.07836914,5.71062469,90.00000000,0,1,3600); //Police Car (LSPD)
-	AddStaticVehicleEx(596,1545.54943848,-1659.02734375,5.71062469,90.00000000,0,1,3600); //Police Car (LSPD)
-	AddStaticVehicleEx(596,1545.54943848,-1663.03979492,5.71062469,90.00000000,0,1,3600); //Police Car (LSPD)
-	AddStaticVehicleEx(596,1545.54943848,-1667.89807129,5.71062469,90.00000000,0,1,3600); //Police Car (LSPD)
-	AddStaticVehicleEx(596,1545.54943848,-1671.97827148,5.71062469,90.00000000,0,1,3600); //Police Car (LSPD) 20
-	AddStaticVehicleEx(596,1545.54943848,-1676.07922363,5.71062469,90.00000000,0,1,3600); //Police Car (LSPD)
-	AddStaticVehicleEx(596,1545.54943848,-1684.37084961,5.74014664,90.00000000,0,1,3600); //Police Car (LSPD)
-	AddStaticVehicleEx(596,1545.54943848,-1680.22387695,5.74014664,90.00000000,0,1,3600); //Police Car (LSPD)
-	AddStaticVehicleEx(523,1557.4336,-1710.5233,5.4525,0.00000000,0,1,3600); //HPV1000
-	AddStaticVehicleEx(523,1559.8743,-1710.5233,5.4525,0.00000000,0,1,3600); //HPV1000 25
-	AddStaticVehicleEx(523,1562.3150,-1710.5233,5.4525,0.00000000,0,1,3600); //HPV1000
-	AddStaticVehicleEx(523,1564.7557,-1710.5233,5.4525,0.00000000,0,1,3600); //HPV1000
-	AddStaticVehicleEx(523,1567.1964,-1710.5233,5.4525,0.00000000,0,1,3600); //HPV1000
-	AddStaticVehicleEx(523,1569.6371,-1710.5233,5.4525,0.00000000,0,1,3600); //HPV1000
-	AddStaticVehicleEx(497,1566.50000000,-1708.06005859,28.70000076,90.00000000,0,1,3600); //Police Maverick 30
-	AddStaticVehicleEx(497,1569.69995117,-1652.80004883,28.70000076,0.00000000,0,1,3600); //Police Maverick
-	AddStaticVehicleEx(487,1566.4906,-1694.0710,28.6254,90.00000000,0,0,3600); //Maverick
-	AddStaticVehicleEx(596,1526.49572754,-1643.98303223,6.27575159,180.00000000,0,1,3600); //Police Car (LSPD)
-	AddStaticVehicleEx(596,1530.46606445,-1643.98303223,6.27575159,180.00000000,0,1,3600); //Police Car (LSPD)
-	AddStaticVehicleEx(596,1534.69177246,-1643.98303223,6.27575159,180.00000000,0,1,3600); //Police Car (LSPD)
-	AddStaticVehicleEx(596,1538.71667480,-1643.98303223,6.27575159,180.00000000,0,1,3600); //Police Car (LSPD)
-	AddStaticVehicleEx(525,1591.4323,-1711.0713,5.7688,0.00000000,0,1,3600); //Tow Truck
-	AddStaticVehicleEx(525,1595.4498,-1711.0713,5.7680,0.00000000,0,1,3600); //Tow Truck
-	AddStaticVehicleEx(599,1602.6211,-1691.9659,6.0790,90.00000000,0,1,3600); //Police Ranger 45
-	AddStaticVehicleEx(599,1602.6211,-1687.8544,6.1430,90.00000000,0,1,3600); //Police Ranger
-	AddStaticVehicleEx(599,1602.6211,-1683.9187,6.1060,90.00000000,0,1,3600); //Police Ranger
-	AddStaticVehicleEx(599,1602.6211,-1696.0380,6.1060,90.00000000,0,1,3600); //Police Ranger
-	AddStaticVehicleEx(596,1528.7050,-1688.0760,5.6593,270.00000000,1,1,3600); //Police Car (LSPD)
-	AddStaticVehicleEx(596,1528.7050,-1683.9211,5.6593,270.00000000,1,1,3600); //Police Car (LSPD)
+	createVehicles();
     
     return 1;
 }
 
-// @TODO when we add personal vehicles add functionality to verify access to the car
+forward createVehicles();
+public createVehicles()
+{
+	for (new i = 0; i < sizeof(g_arrVehicleData); i++) {
+		g_arrVehicleData[i][e_VehicleId] = 	AddStaticVehicleEx(
+												g_arrVehicleData[i][e_VehicleModel], 
+												g_arrVehicleData[i][e_VehiclePos][0], 
+												g_arrVehicleData[i][e_VehiclePos][1], 
+												g_arrVehicleData[i][e_VehiclePos][2], 
+												g_arrVehicleData[i][e_VehiclePos][3], 
+												g_arrVehicleData[i][e_VehicleColor][0], 
+												g_arrVehicleData[i][e_VehicleColor][1],
+												VEHICLE_RESPAWN_DELAY
+											);
+	}
+	return 1;
+}
+
+// @TODO when we add personal vehicles add functionality to verify access to the vehicle
 forward AttemptToTurnVehicleEngineOn(playerid, vehicleid);
 stock AttemptToTurnVehicleEngineOn(playerid, vehicleid)
 {
@@ -63,7 +165,7 @@ stock AttemptToTurnVehicleEngineOn(playerid, vehicleid)
         bonnet,
         boot,
         objective,
-        Float:CarHealth,
+        Float:VehHealth,
         string[128];
 
 	GetVehicleParamsEx(vehicleid, engine, lights, alarm, doors, bonnet, boot, objective);
@@ -76,9 +178,9 @@ stock AttemptToTurnVehicleEngineOn(playerid, vehicleid)
 		return 1;
 	}
 
-	GetVehicleHealth(vehicleid, CarHealth);
+	GetVehicleHealth(vehicleid, VehHealth);
     
-    if (CarHealth < MIN_CAR_HEALTH)
+    if (VehHealth < MIN_VEHICLE_HEALTH)
         return SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION]: "COLOR_WHITE_INLINE" No puedes encender el vehiculo, el motor esta demasiado dañado.");
     
     else if (GetPVarInt(playerid, "TurningEngineOn") != 0)
@@ -95,18 +197,8 @@ stock AttemptToTurnVehicleEngineOn(playerid, vehicleid)
 forward IsVehiclePublic(vehicleid);
 stock IsVehiclePublic(vehicleid)
 {
-    return vehicleid <= MAX_CAR_PUBLIC;
+    return vehicleid <= MAX_VEHICLE_PUBLIC;
 }
-
-forward IsVehicleFaction(vehicleid);
-stock isVehicleFaction(vehicleid)
-{
-	if(IsCarSapd(vehicleid))
-        return true;
-    
-    return false;
-}
-
 
 // @TODO
 forward IsVehicleJob(vehicleid);
@@ -116,22 +208,38 @@ stock IsVehicleJob(vehicleid)
     return false;
 }
 
-forward PlayerCanUseVehicleFaction(playerid, vehicleid);
-stock PlayerCanUseVehicleFaction(playerid, vehicleid)
+
+forward IsVehicleFaction(vehicleid);
+stock isVehicleFaction(vehicleid)
 {
-	if(IsCarSapd(vehicleid) && GetPlayerFactionId(playerid) == FACTION_SAPD)
+	if(IsVehSapd(vehicleid))
         return true;
     
     return false;
 }
 
-forward IsCarSapd(vehicleid);
-stock IsCarSapd(vehicleid)
+forward PlayerCanUseVehicleFaction(playerid, vehicleid);
+stock PlayerCanUseVehicleFaction(playerid, vehicleid)
 {
-	if(vehicleid >= 1 && vehicleid <= 50)
-        return 1;
+	if(IsVehSapd(vehicleid) && GetPlayerFactionId(playerid) == FACTION_SAPD)
+        return true;
+    
+    return false;
+}
 
-	return 0;
+forward IsVehSapd(vehicleid);
+stock IsVehSapd(vehicleid)
+{
+	new isVehicleIdSapd = false;
+
+	for (new i = 0; i < sizeof(g_arrVehicleData); i++) {
+		if (g_arrVehicleData[i][e_VehicleId] == vehicleid && g_arrVehicleData[i][e_VehicleFactionId] == FACTION_SAPD) {
+			isVehicleIdSapd = true;
+			break;
+		}
+	}
+
+	return isVehicleIdSapd;
 }
 
 /* ------------- TIMERS ------------------ */

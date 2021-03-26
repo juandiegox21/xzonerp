@@ -25,8 +25,8 @@
 #define COLOR_FADE5 		0x6E6E6E6E
 
 // VEHICLES
-#define MIN_CAR_HEALTH 350 // Less than 350 of health for a car will set it up on fire, with this we can avoid cars from setting up on fire.
-#define MAX_CAR_PUBLIC 73 // Maximum of public cars such as jobs, and factions. 
+#define MIN_VEHICLE_HEALTH 350 // Less than 350 of health for a car will set it up on fire, with this we can avoid cars from setting up on fire.
+#define MAX_VEHICLE_PUBLIC 73 // Maximum of public cars such as jobs, and factions. 
 
 hook OnGameModeInit() 
 {
