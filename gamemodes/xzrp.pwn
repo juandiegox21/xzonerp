@@ -42,7 +42,10 @@
 #include "../modules/factions.inc"
 
 // Player commands
-#include "../modules/player/commands.inc" // Chat 
+#include "../modules/player/cmd_general.inc"
+#include "../modules/player/cmd_chat.inc"
+#include "../modules/player/cmd_faction.inc"
+#include "../modules/player/cmd_vehicle.inc"
 
 // Admin commands
 #include "../modules/admin/commands.inc"

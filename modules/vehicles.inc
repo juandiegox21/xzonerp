@@ -9,6 +9,31 @@ hook OnGameModeInit()
     return 1;
 }
 
+forward IsABike(vehicleid);
+stock IsABike(vehicleid)
+{
+	new VehicleModel = GetVehicleModel(vehicleid);
+
+	if(VehicleModel == 510 || VehicleModel == 481 || VehicleModel == 509)
+		return true;
+
+	return false;
+}
+
+forward IsVehiclePublic(vehicleid);
+stock IsVehiclePublic(vehicleid)
+{
+    return vehicleid <= MAX_VEHICLE_PUBLIC;
+}
+
+// @TODO
+forward IsVehicleJob(vehicleid);
+stock IsVehicleJob(vehicleid)
+{
+	printf("%d", vehicleid);
+    return false;
+}
+
 // @TODO when we add personal vehicles add functionality to verify access to the vehicle
 forward AttemptToTurnVehicleEngineOn(playerid, vehicleid);
 stock AttemptToTurnVehicleEngineOn(playerid, vehicleid)
@@ -62,51 +87,6 @@ stock AttemptToTurnVehicleEngineOn(playerid, vehicleid)
 	SetPVarInt(playerid, "TurningEngineOn", 1);
 	defer TurnVehicleEngineOn(playerid, vehicleid);
 	return 1;
-}
-
-forward IsVehiclePublic(vehicleid);
-stock IsVehiclePublic(vehicleid)
-{
-    return vehicleid <= MAX_VEHICLE_PUBLIC;
-}
-
-// @TODO
-forward IsVehicleJob(vehicleid);
-stock IsVehicleJob(vehicleid)
-{
-	printf("%d", vehicleid);
-    return false;
-}
-
-forward PlayerCanUseVehicleFaction(playerid, vehicleid);
-stock PlayerCanUseVehicleFaction(playerid, vehicleid)
-{
-	// SAPD
-	if	(
-			IsVehicleFromFaction(vehicleid, FACTION_SAPD) && 
-			GetPlayerFactionId(playerid) == FACTION_SAPD
-		)
-        return true;
-
-	// MEPD
-	if	(
-			IsVehicleFromFaction(vehicleid, FACTION_MEPD) && 
-			GetPlayerFactionId(playerid) == FACTION_MEPD
-		)
-        return true;
-    
-    return false;
-}
-
-forward IsABike(vehicleid);
-stock IsABike(vehicleid)
-{
-	new VehicleModel = GetVehicleModel(vehicleid);
-
-	if(VehicleModel == 510 || VehicleModel == 481 || VehicleModel == 509)
-		return true;
-
-	return false;
 }
 
 /* ------------- TIMERS ------------------ */

@@ -164,3 +164,23 @@ stock IsVehicleFromFaction(vehicleid, FactionId)
 
 	return isVehFromFaction;
 }
+
+forward PlayerCanUseVehicleFaction(playerid, vehicleid);
+stock PlayerCanUseVehicleFaction(playerid, vehicleid)
+{
+	// SAPD
+	if	(
+			IsVehicleFromFaction(vehicleid, FACTION_SAPD) && 
+			GetPlayerFactionId(playerid) == FACTION_SAPD
+		)
+        return true;
+
+	// MEPD
+	if	(
+			IsVehicleFromFaction(vehicleid, FACTION_MEPD) && 
+			GetPlayerFactionId(playerid) == FACTION_MEPD
+		)
+        return true;
+    
+    return false;
+}
