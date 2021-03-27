@@ -27,6 +27,7 @@
 // VEHICLES
 #define MIN_VEHICLE_HEALTH 350 // Less than 350 of health for a car will set it up on fire, with this we can avoid cars from setting up on fire.
 #define MAX_VEHICLE_PUBLIC 73 // Maximum of public cars such as jobs, and factions. 
+#define VEHICLE_RESPAWN_DELAY 3600 // 1h
 
 hook OnGameModeInit() 
 {
