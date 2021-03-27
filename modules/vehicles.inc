@@ -186,7 +186,7 @@ stock AttemptToTurnVehicleEngineOn(playerid, vehicleid)
     else if (GetPVarInt(playerid, "TurningEngineOn") != 0)
         return 1;
 
-	format(string, sizeof(string), "* %s mete la llave en el contacto y lo gira.", GetPlayerNameRP(playerid));
+	format(string, sizeof(string), "* %s mete la llave en el contacto y la gira.", GetPlayerNameRP(playerid));
 	ProxDetector(15.0, playerid, string, COLOR_PURPLE, COLOR_PURPLE, COLOR_PURPLE, COLOR_PURPLE, COLOR_PURPLE);
 
 	SetPVarInt(playerid, "TurningEngineOn", 1);
@@ -212,34 +212,58 @@ stock IsVehicleJob(vehicleid)
 forward IsVehicleFaction(vehicleid);
 stock isVehicleFaction(vehicleid)
 {
-	if(IsVehSapd(vehicleid))
-        return true;
-    
-    return false;
+	new IsVehFaction = false;
+	for (new i = 0; i < sizeof(g_arrVehicleData); i++) {
+		if 	(
+				g_arrVehicleData[i][e_VehicleId] == vehicleid && 
+				g_arrVehicleData[i][e_VehicleFactionId] > 0
+			) {
+
+			IsVehFaction = true;
+			break;
+		}
+	}
+	
+    return IsVehFaction;
 }
 
 forward PlayerCanUseVehicleFaction(playerid, vehicleid);
 stock PlayerCanUseVehicleFaction(playerid, vehicleid)
 {
-	if(IsVehSapd(vehicleid) && GetPlayerFactionId(playerid) == FACTION_SAPD)
+	// SAPD
+	if	(
+			IsVehFromFaction(vehicleid, FACTION_SAPD) && 
+			GetPlayerFactionId(playerid) == FACTION_SAPD
+		)
+        return true;
+
+	// MEPD
+	if	(
+			IsVehFromFaction(vehicleid, FACTION_MEPD) && 
+			GetPlayerFactionId(playerid) == FACTION_MEPD
+		)
         return true;
     
     return false;
 }
 
-forward IsVehSapd(vehicleid);
-stock IsVehSapd(vehicleid)
+forward IsVehFromFaction(vehicleid, FactionId);
+stock IsVehFromFaction(vehicleid, FactionId)
 {
-	new isVehicleIdSapd = false;
+	new isVehFromFaction = false;
 
 	for (new i = 0; i < sizeof(g_arrVehicleData); i++) {
-		if (g_arrVehicleData[i][e_VehicleId] == vehicleid && g_arrVehicleData[i][e_VehicleFactionId] == FACTION_SAPD) {
-			isVehicleIdSapd = true;
+		if 	(
+				g_arrVehicleData[i][e_VehicleId] == vehicleid && 
+				g_arrVehicleData[i][e_VehicleFactionId] == FactionId
+			) {
+
+			isVehFromFaction = true;
 			break;
 		}
 	}
 
-	return isVehicleIdSapd;
+	return isVehFromFaction;
 }
 
 /* ------------- TIMERS ------------------ */
