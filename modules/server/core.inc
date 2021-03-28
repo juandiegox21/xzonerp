@@ -13,9 +13,10 @@
 #define COLOR_YELLOW_LIGHT		0xfdfe8bFF
 #define COLOR_DODGER_BLUE		0x1e90ffFF
 // Inline colors can be used inside a string
-#define COLOR_WHITE_INLINE		"{FFFFFF}"
-#define COLOR_ORANGE_INLINE		"{ff8c00}"
-#define COLOR_DODGER_BLUE_INLINE "{1e90ff}"
+#define COLOR_WHITE_INLINE			"{FFFFFF}"
+#define COLOR_ORANGE_INLINE			"{ff8c00}"
+#define COLOR_DODGER_BLUE_INLINE	"{1e90ff}"
+#define COLOR_GREEN_INLINE 			"{1eb032}"
 
 // for ProxDetector
 #define COLOR_FADE1 		0xE6E6E6E6

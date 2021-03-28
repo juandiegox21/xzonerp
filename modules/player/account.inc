@@ -29,7 +29,9 @@ enum E_PLAYERS
 
 	bool: pIsLoggedIn,
 	pLoginAttempts,
-	pLoginTimer
+	pLoginTimer,
+
+	pVehicleRentedId,
 };
 new Player[MAX_PLAYERS][E_PLAYERS];
 
@@ -62,6 +64,9 @@ hook OnPlayerConnect(playerid)
 	orm_addvar_float(ormid, Player[playerid][pPos_Z], "pos_z");
 	orm_addvar_float(ormid, Player[playerid][pPos_Angle], "pos_angle");
 	orm_addvar_int(ormid, Player[playerid][pPos_Interior], "pos_interior");
+
+	orm_addvar_int(ormid, Player[playerid][pVehicleRentedId], "vehicle_rented_id");
+
 	orm_setkey(ormid, "username");
 
     // tell the orm system to load all data, assign it to our variables and call our callback when ready
@@ -322,4 +327,10 @@ forward PlayerIsFactionLeader(playerid);
 stock PlayerIsFactionLeader(playerid)
 {
 	return GetPlayerFactionRankElevation(playerid) == 4;
+}
+
+forward GetPlayerRentedVehicleId(playerid);
+stock GetPlayerRentedVehicleId(playerid)
+{
+	return Player[playerid][pVehicleRentedId];
 }

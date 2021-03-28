@@ -7,3 +7,10 @@ CMD:motor(playerid,params[])
 	AttemptToTurnVehicleEngineOn(playerid, vehicleid);
 	return 1;
 }
+
+CMD:chimbo(playerid,params[])
+{
+	if(sscanf(params, "i", params[0])) return SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION] "COLOR_WHITE_INLINE" /chimbo [vehid]");
+	SetVehicleRented(params[0]);
+	return 1;
+}	

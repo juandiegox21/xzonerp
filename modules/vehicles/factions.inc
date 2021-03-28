@@ -134,8 +134,7 @@ stock isVehicleFaction(vehicleid)
 	new IsVehFaction = false;
 	for (new i = 0; i < sizeof(g_arrVehicleFactionData); i++) {
 		if 	(
-				g_arrVehicleFactionData[i][e_VehicleId] == vehicleid && 
-				g_arrVehicleFactionData[i][e_VehicleFactionId] > 0
+				g_arrVehicleFactionData[i][e_VehicleId] == vehicleid
 			) {
 
 			IsVehFaction = true;

@@ -1,11 +1,55 @@
 #include <YSI_Coding\y_hooks>
 
 #include "../modules/vehicles/factions.inc"
+#include "../modules/vehicles/rentals.inc"
 
 hook OnGameModeInit()
 {
 	CreateFactionVehicles();
+	CreateRentalVehicles();
     
+    return 1;
+}
+
+hook OnPlayerStateChange(playerid, newstate, oldstate)
+{
+	// Player entered a vehicle as a driver
+    if(oldstate == PLAYER_STATE_ONFOOT && newstate == PLAYER_STATE_DRIVER) {
+        new vehicleid = GetPlayerVehicleID(playerid);
+
+		if (IsVehiclePublic(vehicleid) && isVehicleFaction(vehicleid)) {
+			if (!PlayerCanUseVehicleFaction(playerid, vehicleid)) {
+				return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: No tienes las llaves de este vehiculo");
+			}
+		}
+
+		else if (IsVehicleJob(vehicleid)) {
+			// Add conditions for job vehicles
+		}
+		
+		else if (IsVehicleRental(vehicleid)) {
+			if (IsVehicleRented(vehicleid) && !PlayerCanUseVehicleRental(playerid, vehicleid)) {
+				RemovePlayerFromVehicle(playerid);
+				return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: Esta bici ya esta siendo rentada por otro jugador");
+			}
+
+			else if (PlayerCanUseVehicleRental(playerid, vehicleid)) {
+				// @TODO
+				SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION]: "COLOR_WHITE_INLINE" Estas rentando esta bici, tiempo restante de renta: "COLOR_ORANGE_INLINE" 25m");
+				SendClientMessage(playerid, COLOR_ORANGE,
+					"[RENTAS]: "COLOR_WHITE_INLINE" Para extender la renta "COLOR_ORANGE_INLINE" /rentar bici"\
+					""COLOR_WHITE_INLINE" el precio es de "COLOR_GREEN_INLINE"$100"COLOR_WHITE_INLINE" por 30 minutos."
+				);
+				return 1;
+			}
+
+			else {
+				SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION]: "COLOR_WHITE_INLINE" Esta bici esta a la renta "COLOR_ORANGE_INLINE" /rentar bici "COLOR_WHITE_INLINE" para rentarla");
+				SendClientMessage(playerid, COLOR_ORANGE, "[RENTAS]: "COLOR_WHITE_INLINE" El precio es de "COLOR_GREEN_INLINE"$100"COLOR_WHITE_INLINE" por 30 minutos.");
+				return 1;
+			}
+		}
+    }
     return 1;
 }
 
