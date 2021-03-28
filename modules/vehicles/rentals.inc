@@ -72,22 +72,6 @@ stock IsVehicleRented(vehicleid)
     return IsVehRented;
 }
 
-forward SetVehicleRented(vehicleid);
-public SetVehicleRented(vehicleid)
-{
-    new index = -1;
-
-    for (new i = 0; i < sizeof(g_arrVehicleRentalData); i++) {
-		if 	(g_arrVehicleRentalData[i][e_VehicleId] == vehicleid) {
-            index = i;
-			break;
-		}
-	}
-
-    g_arrVehicleRentalData[index][e_VehicleRented] = true;
-    return 1;
-}
-
 forward PlayerCanUseVehicleRental(playerid, vehicleid);
 stock PlayerCanUseVehicleRental(playerid, vehicleid)
 {

@@ -217,7 +217,7 @@ CMD:fexpulsar(playerid, params[])
     }
 
     new KickMemberConfirmationString[120];
-    
+
     format(KickMemberConfirmationString, sizeof KickMemberConfirmationString, "Estas seguro que quieres expulsar a %s de tu faccion?", GetPlayerNameRP(playerid2));
     Dialog_ShowCallback(playerid, using inline DialogKickMemberFromFaction, DIALOG_STYLE_MSGBOX, GetFactionName(PlayerFactionId), KickMemberConfirmationString, "Expulsar", "Cancelar");
     return 1;
