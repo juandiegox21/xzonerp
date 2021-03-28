@@ -31,11 +31,24 @@ CMD:rentar(playerid,params[])
 			return 1;
 		}
 
-		// The player is already renting a vehicle but it's not this one
+		// The player is already renting a vehicle but it's not this vehicle
 		if (GetPlayerRentedVehicleId(playerid) > 0 && !PlayerCanUseVehicleRental(playerid, vehicleid)) {
-			// @TODO You are already renting a vehicle but it is not this one, unrent it so you can rent this one?
-			// Dialog_ShowCallback(playerid, using inline DialogUnrentBike, DIALOG_STYLE_MSGBOX, "Ya estas rentando una bici", "", "Desalquilar", "Cancelar");
-			
+			inline DialogUnrentBike(id, dialogid, response, listitem, string: inputtext[]) {
+				#pragma unused id, dialogid, listitem, inputtext
+				if (!response)
+					return 1;
+
+				new rentedVehicleId = GetPlayerRentedVehicleId(playerid);
+
+				SetPlayerRentedVehicleId(playerid, 0);
+				SetVehicleRentedStatus(rentedVehicleId, false);
+
+				SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION]: "COLOR_WHITE_INLINE" Has desalquilado tu bici anterior, ya puedes alquilar una nueva");
+				return cmd_rentar(playerid,params);
+			}
+
+			// Give the user the option to unrent a previous rented vehicle.
+			Dialog_ShowCallback(playerid, using inline DialogUnrentBike, DIALOG_STYLE_MSGBOX, "Quieres desalquilar tu bici anterior?", "Ya estas rentando una bici, sin embargo puedes desalquilar tu bici anterior para alquilar esta nueva.", "Desalquilar", "Cancelar");
 			return 1;
 		}
 

@@ -72,6 +72,21 @@ stock IsVehicleRented(vehicleid)
     return IsVehRented;
 }
 
+forward GetVehicleRentalIndexById(vehicleid);
+stock GetVehicleRentalIndexById(vehicleid)
+{
+    new Index = -1;
+
+    for (new i = 0; i < sizeof(g_arrVehicleRentalData); i++) {
+		if 	(g_arrVehicleRentalData[i][e_VehicleId] == vehicleid) {
+			Index = i;
+			break;
+		}
+	}
+
+    return Index;
+}
+
 forward PlayerCanUseVehicleRental(playerid, vehicleid);
 stock PlayerCanUseVehicleRental(playerid, vehicleid)
 {
@@ -79,4 +94,13 @@ stock PlayerCanUseVehicleRental(playerid, vehicleid)
         return true;
 
     return false;
+}
+
+forward SetVehicleRentedStatus(vehicleid, bool:isRented);
+public SetVehicleRentedStatus(vehicleid, bool:isRented)
+{
+    new RentalVehicleIndex = GetVehicleRentalIndexById(vehicleid);
+
+    g_arrVehicleRentalData[RentalVehicleIndex][e_VehicleRented] = isRented;
+    return 1;
 }

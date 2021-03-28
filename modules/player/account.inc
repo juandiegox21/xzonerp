@@ -334,3 +334,10 @@ stock GetPlayerRentedVehicleId(playerid)
 {
 	return Player[playerid][pVehicleRentedId];
 }
+
+forward SetPlayerRentedVehicleId(playerid, vehicleid);
+public SetPlayerRentedVehicleId(playerid, vehicleid)
+{
+	Player[playerid][pVehicleRentedId] = vehicleid;
+	return 1;
+}
