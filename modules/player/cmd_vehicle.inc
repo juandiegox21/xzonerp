@@ -8,10 +8,14 @@ CMD:motor(playerid,params[])
 	return 1;
 }
 
-CMD:rentar(playerid,params[])
+CMD:chimbo(playerid, params[])
 {
-	if(!IsPlayerConnected(playerid)) return SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION] "COLOR_WHITE_INLINE" Debes estar logueado para usar este comando");
-    
+	GetAllRentalVehicles();
+	return 1;
+}
+
+CMD:rentar(playerid,params[])
+{    
     if(sscanf(params, "s[32]", params)) {
         SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION] "COLOR_WHITE_INLINE" /rentar [opcion]");
         SendClientMessage(playerid, COLOR_ORANGE, "[OPCIONES] > "COLOR_WHITE_INLINE" bici");
@@ -21,22 +25,25 @@ CMD:rentar(playerid,params[])
     if(!strcmp(params, "bici", true, 4)) {
 		new vehicleid = GetPlayerVehicleID(playerid);
 
-		// Vehicle is already rented
-		if (IsVehicleRented(playerid)) {
-			if (!PlayerCanUseVehicleRental(playerid, vehicleid)) {
-				return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: Esta bici ya esta siendo rentada por otro jugador");
-			}
-
-			// @TODO Player is already renting this vehicle extend?
-			return 1;
+		if (vehicleid == 0 || !IsVehicleRental(vehicleid)) {
+			return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: No estas en un vehiculo que se pueda rentar.");
 		}
 
-		// The player is already renting a vehicle but it's not this vehicle
-		if (GetPlayerRentedVehicleId(playerid) > 0 && !PlayerCanUseVehicleRental(playerid, vehicleid)) {
+		// Vehicle is already rented but by someone else
+		if (IsVehicleRented(vehicleid) && !PlayerCanUseVehicleRental(playerid, vehicleid))
+			return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: Esta bici ya esta siendo rentada por otro jugador");
+
+		else if (IsVehicleRented(vehicleid) && PlayerCanUseVehicleRental(playerid, vehicleid)) {
+			return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: Extender?");
+		}
+
+		else if (!IsVehicleRented(vehicleid) && !PlayerCanUseVehicleRental(playerid, vehicleid) && GetPlayerRentedVehicleId(playerid) > 0 ) {
 			inline DialogUnrentBike(id, dialogid, response, listitem, string: inputtext[]) {
 				#pragma unused id, dialogid, listitem, inputtext
-				if (!response)
+				if (!response) {
+					RemovePlayerFromVehicle(playerid);
 					return 1;
+				}
 
 				new rentedVehicleId = GetPlayerRentedVehicleId(playerid);
 
@@ -44,15 +51,36 @@ CMD:rentar(playerid,params[])
 				SetVehicleRentedStatus(rentedVehicleId, false);
 
 				SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION]: "COLOR_WHITE_INLINE" Has desalquilado tu bici anterior, ya puedes alquilar una nueva");
-				return cmd_rentar(playerid,params);
+
+				new string[32];
+				format (string, sizeof string, "bici");
+				return cmd_rentar(playerid, string);
 			}
 
 			// Give the user the option to unrent a previous rented vehicle.
 			Dialog_ShowCallback(playerid, using inline DialogUnrentBike, DIALOG_STYLE_MSGBOX, "Quieres desalquilar tu bici anterior?", "Ya estas rentando una bici, sin embargo puedes desalquilar tu bici anterior para alquilar esta nueva.", "Desalquilar", "Cancelar");
 			return 1;
 		}
+		
+		inline DialogRentBike(id, dialogid, response, listitem, string: inputtext[]) {
+			#pragma unused id, dialogid, listitem, inputtext
+			if (!response) {
+				RemovePlayerFromVehicle(playerid);
+				return 1;
+			}
 
-		// @TODO you have rented the vehicle
+			SetPlayerRentedVehicleId(playerid, vehicleid);
+			SetVehicleRentedStatus(vehicleid, true);
+		
+			SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION]: "COLOR_WHITE_INLINE" Has alquilado esta bici por 30 minutos");
+			SendClientMessage(playerid, COLOR_ORANGE,
+				"[RENTAS]: "COLOR_WHITE_INLINE" Para extender la renta "COLOR_ORANGE_INLINE" /rentar bici"\
+				""COLOR_WHITE_INLINE" el precio es de "COLOR_GREEN_INLINE"$100"COLOR_WHITE_INLINE" por 30 minutos."
+			);
+			// @TODO renting a bike should remove money from the player.
+		}
+
+		Dialog_ShowCallback(playerid, using inline DialogRentBike, DIALOG_STYLE_MSGBOX, "Bici en alquiler", "Quieres rentar esta bici por 30 minutos? el precio es de "COLOR_GREEN_INLINE"$100.", "Alquilar", "Cancelar");
 		return 1;
 	}
 

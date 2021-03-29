@@ -3,9 +3,7 @@
 /* ------------- MEMBERS FACTION COMMANDS ------------------ */
 
 CMD:f(playerid, params[])
-{
-    if(!IsPlayerConnected(playerid)) return SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION] "COLOR_WHITE_INLINE" Debes estar logueado para usar este comando");
-    
+{    
     new PlayerFactionId = GetPlayerFactionId(playerid);
     
     if (PlayerFactionId < 1)
@@ -24,8 +22,6 @@ CMD:f(playerid, params[])
 
 CMD:fmiembros(playerid, params[])
 {
-    if(!IsPlayerConnected(playerid)) return SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION] "COLOR_WHITE_INLINE" Debes estar logueado para usar este comando");
-    
     new 
         PlayerFactionId = GetPlayerFactionId(playerid);
 
@@ -36,10 +32,8 @@ CMD:fmiembros(playerid, params[])
 }
 
 CMD:frenunciar(playerid, params[])
-{
-    if(!IsPlayerConnected(playerid)) return SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION] "COLOR_WHITE_INLINE" Debes estar logueado para usar este comando");
-    
-    else if (GetPlayerFactionId(playerid) < 1)
+{    
+    if (GetPlayerFactionId(playerid) < 1)
         return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: No perteneces a una faccion.");
     
     else if (PlayerIsFactionLeader(playerid))
@@ -70,9 +64,7 @@ CMD:frenunciar(playerid, params[])
 /* ------------- LEADER FACTION COMMANDS ------------------ */
 
 CMD:finvitar(playerid, params[])
-{
-    if(!IsPlayerConnected(playerid)) return SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION] "COLOR_WHITE_INLINE" Debes estar logueado para usar este comando");
-    
+{    
     new 
         PlayerFactionId = GetPlayerFactionId(playerid);
 
@@ -118,9 +110,7 @@ CMD:finvitar(playerid, params[])
 }
 
 CMD:fpromover(playerid, params[])
-{
-    if(!IsPlayerConnected(playerid)) return SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION] "COLOR_WHITE_INLINE" Debes estar logueado para usar este comando");
-    
+{    
     new 
         PlayerFactionId = GetPlayerFactionId(playerid);
 
@@ -172,10 +162,8 @@ CMD:fpromover(playerid, params[])
 }
 
 CMD:fexpulsar(playerid, params[])
-{
-    if(!IsPlayerConnected(playerid)) return SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION] "COLOR_WHITE_INLINE" Debes estar logueado para usar este comando");
-    
-    else if (GetPlayerFactionId(playerid) < 1)
+{    
+    if (GetPlayerFactionId(playerid) < 1)
         return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: No perteneces a una faccion.");
     
     else if (GetPlayerFactionRankElevation(playerid) < 3)

@@ -1,7 +1,5 @@
 CMD:cuenta(playerid, params[])
 {
-	if(!IsPlayerConnected(playerid)) return SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION] "COLOR_WHITE_INLINE" Debes estar logueado para usar este comando");
-
     new 
         string[240],
         FactionId = GetPlayerFactionId(playerid),
@@ -145,9 +143,7 @@ static GetFactionCommands(playerid, const FactionName[])
 }
 
 CMD:aceptar(playerid, params[])
-{
-    if(!IsPlayerConnected(playerid)) return SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION] "COLOR_WHITE_INLINE" Debes estar logueado para usar este comando");
-    
+{    
     if(sscanf(params, "s[32]", params)) {
         SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION] "COLOR_WHITE_INLINE" /aceptar [opcion]");
         SendClientMessage(playerid, COLOR_ORANGE, "[OPCIONES] > "COLOR_WHITE_INLINE" faccion");
@@ -190,9 +186,7 @@ CMD:aceptar(playerid, params[])
 }
 
 CMD:rechazar(playerid, params[])
-{
-    if(!IsPlayerConnected(playerid)) return SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION] "COLOR_WHITE_INLINE" Debes estar logueado para usar este comando");
-    
+{    
     if(sscanf(params, "s[32]", params)) {
         SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION] "COLOR_WHITE_INLINE" /rechazar [opcion]");
         SendClientMessage(playerid, COLOR_ORANGE, "[OPCIONES] > "COLOR_WHITE_INLINE" faccion");

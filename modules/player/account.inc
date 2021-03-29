@@ -339,5 +339,12 @@ forward SetPlayerRentedVehicleId(playerid, vehicleid);
 public SetPlayerRentedVehicleId(playerid, vehicleid)
 {
 	Player[playerid][pVehicleRentedId] = vehicleid;
+	orm_save(Player[playerid][pORM_ID]);
 	return 1;
+}
+
+forward IsPlayerLoggedIn(playerid);
+stock IsPlayerLoggedIn(playerid)
+{
+	return Player[playerid][pIsLoggedIn];
 }

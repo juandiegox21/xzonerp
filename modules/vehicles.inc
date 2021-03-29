@@ -33,7 +33,7 @@ hook OnPlayerStateChange(playerid, newstate, oldstate)
 				return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: Esta bici ya esta siendo rentada por otro jugador");
 			}
 
-			else if (PlayerCanUseVehicleRental(playerid, vehicleid)) {
+			else if (IsVehicleRented(vehicleid) && PlayerCanUseVehicleRental(playerid, vehicleid)) {
 				// @TODO
 				SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION]: "COLOR_WHITE_INLINE" Estas rentando esta bici, tiempo restante de renta: "COLOR_ORANGE_INLINE" 25m");
 				SendClientMessage(playerid, COLOR_ORANGE,

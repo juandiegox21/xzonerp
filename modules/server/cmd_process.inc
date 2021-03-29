@@ -10,3 +10,13 @@ public OnPlayerCommandPerformed(playerid, cmdtext[], success)
 
 	return 1;
 }
+
+public OnPlayerCommandReceived(playerid,cmdtext[])
+{
+	if(!IsPlayerLoggedIn(playerid)) {
+		SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION] "COLOR_WHITE_INLINE" Debes estar logueado para usar este comando");
+		return 0;
+	}
+
+	return 1;
+}

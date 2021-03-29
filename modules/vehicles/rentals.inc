@@ -1,3 +1,5 @@
+// @TODO We should add more bikes for rental, and also the rental vehicles should expire when they are not being rented anymore
+
 enum e_VehicleRentalData
 {
 	e_VehicleId,
@@ -103,4 +105,14 @@ public SetVehicleRentedStatus(vehicleid, bool:isRented)
 
     g_arrVehicleRentalData[RentalVehicleIndex][e_VehicleRented] = isRented;
     return 1;
+}
+
+forward GetAllRentalVehicles();
+stock GetAllRentalVehicles()
+{
+    new string[120];
+    for (new i = 0; i < sizeof(g_arrVehicleRentalData); i++) {
+        format(string, sizeof string, "VehicleId: %d | Rented: %d", g_arrVehicleRentalData[i][e_VehicleId], g_arrVehicleRentalData[i][e_VehicleRented]);
+		SendClientMessageToAll(-1, string);
+	}
 }
