@@ -45,7 +45,7 @@ hook OnPlayerRequestClass(playerid, classid)
 	return 0;
 }
 
-//Encriptador
+// Encrypt
 static AntiDeAMX()
 {
 	new a[][] =
