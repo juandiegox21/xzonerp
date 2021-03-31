@@ -3,7 +3,7 @@
 enum e_VehicleRentalData
 {
 	e_VehicleId,
-    bool:e_VehicleRented,
+    e_VehicleRenterSqlId,
 	e_VehicleModel,
 	Float:e_VehiclePos[4], // X, Y, Z, Angle
 	e_VehicleColor[2], // Color 1, Color 2
@@ -12,13 +12,13 @@ enum e_VehicleRentalData
 static const g_arrVehicleRentalData[][e_VehicleRentalData] =
 {
     {
-        -1, false, 509, {1731.1541, -1862.8352, 13.0953, 0.00}, {126, 126}
+        -1, -1, 509, {1731.1541, -1862.8352, 13.0953, 0.00}, {126, 126}
     },
     {
-        -1, false, 509, {1729.3250, -1862.9210, 13.0953, 0.00}, {126, 126}
+        -1, -1, 509, {1729.3250, -1862.9210, 13.0953, 0.00}, {126, 126}
     },
     {
-        -1, false, 509, {1727.6307, -1862.8716, 13.0953, 0.00}, {126, 126}
+        -1, -1, 509, {1727.6307, -1862.8716, 13.0953, 0.00}, {126, 126}
     }
 };
 
@@ -64,7 +64,7 @@ stock IsVehicleRented(vehicleid)
 	for (new i = 0; i < sizeof(g_arrVehicleRentalData); i++) {
 		if 	(
                 g_arrVehicleRentalData[i][e_VehicleId] == vehicleid &&
-                g_arrVehicleRentalData[i][e_VehicleRented] == true
+                g_arrVehicleRentalData[i][e_VehicleRenterSqlId] > -1
             ) {
 			IsVehRented = true;
 			break;
@@ -98,12 +98,12 @@ stock PlayerCanUseVehicleRental(playerid, vehicleid)
     return false;
 }
 
-forward SetVehicleRentedStatus(vehicleid, bool:isRented);
-public SetVehicleRentedStatus(vehicleid, bool:isRented)
+forward SetVehicleRenterSqlId(vehicleid, RenterId);
+public SetVehicleRenterSqlId(vehicleid, RenterId)
 {
     new RentalVehicleIndex = GetVehicleRentalIndexById(vehicleid);
 
-    g_arrVehicleRentalData[RentalVehicleIndex][e_VehicleRented] = isRented;
+    g_arrVehicleRentalData[RentalVehicleIndex][e_VehicleRenterSqlId] = RenterId;
     return 1;
 }
 
@@ -112,7 +112,7 @@ stock GetAllRentalVehicles()
 {
     new string[120];
     for (new i = 0; i < sizeof(g_arrVehicleRentalData); i++) {
-        format(string, sizeof string, "VehicleId: %d | Rented: %d", g_arrVehicleRentalData[i][e_VehicleId], g_arrVehicleRentalData[i][e_VehicleRented]);
+        format(string, sizeof string, "VehicleId: %d | Renter Id: %d", g_arrVehicleRentalData[i][e_VehicleId], g_arrVehicleRentalData[i][e_VehicleRenterSqlId]);
 		SendClientMessageToAll(-1, string);
 	}
 }
