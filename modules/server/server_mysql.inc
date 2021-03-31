@@ -2,7 +2,8 @@
 
 new MySQL: dbHandle;
 
-static MySQL_CreateConnection()
+forward MySQL_CreateConnection();
+public MySQL_CreateConnection()
 {
     new hostname[70];
     if(Env_Has("MYSQL_HOST")) {
@@ -40,18 +41,6 @@ static MySQL_CreateConnection()
 
     Logger_Log("[MySQL]: La conexion al servidor de MySQL ha sido exitosa.");
 
-    return 1;
-}
-
-hook OnGameModeInit()
-{ 
-    MySQL_CreateConnection();
-    return 1;
-}
-
-hook OnGameModeExit()
-{
-    mysql_close(dbHandle);
     return 1;
 }
 

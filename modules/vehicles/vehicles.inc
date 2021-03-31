@@ -1,7 +1,7 @@
 #include <YSI_Coding\y_hooks>
 
-#include "../modules/vehicles/factions.inc"
-#include "../modules/vehicles/rentals.inc"
+#include <vehicles_factions>
+#include <vehicles_rentals>
 
 hook OnGameModeInit()
 {

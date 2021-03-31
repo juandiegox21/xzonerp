@@ -59,5 +59,26 @@
 		"conncookies": true,
 		"cookielogging": false,
 		"output": true
-	}
+	},
+	"builds": [
+		{
+			"name": "dev",
+			"version": "3.10.10",
+			"args": [
+				"-;+",
+				"-(+",
+				"-d3",
+				"-E",
+				"-Z"
+			],
+			"includes": [
+				"modules/server",
+				"modules/account",
+				"modules/factions",
+				"modules/vehicles",
+				"modules/cmds",
+				"modules/maps"
+			]
+		}
+	]
 }
