@@ -110,8 +110,8 @@ static const g_arrVehicleFactionData[][e_VehicleFactionData] =
 		}
 };
 
-forward CreateFactionVehicles();
-public CreateFactionVehicles()
+forward Vehicle_CreateFactions();
+public Vehicle_CreateFactions()
 {
 	for (new i = 0; i < sizeof(g_arrVehicleFactionData); i++) {
 		g_arrVehicleFactionData[i][e_VehicleId] = 	AddStaticVehicleEx(
@@ -128,8 +128,7 @@ public CreateFactionVehicles()
     return 1;
 }
 
-forward IsVehicleFaction(vehicleid);
-stock isVehicleFaction(vehicleid)
+stock Vehicle_IsFaction(vehicleid)
 {
 	new IsVehFaction = false;
 	for (new i = 0; i < sizeof(g_arrVehicleFactionData); i++) {
@@ -145,8 +144,7 @@ stock isVehicleFaction(vehicleid)
     return IsVehFaction;
 }
 
-forward IsVehicleFromFaction(vehicleid, FactionId);
-stock IsVehicleFromFaction(vehicleid, FactionId)
+stock Vehicle_IsFromFaction(vehicleid, FactionId)
 {
 	new isVehFromFaction = false;
 
@@ -164,20 +162,19 @@ stock IsVehicleFromFaction(vehicleid, FactionId)
 	return isVehFromFaction;
 }
 
-forward PlayerCanUseVehicleFaction(playerid, vehicleid);
-stock PlayerCanUseVehicleFaction(playerid, vehicleid)
+stock Vehicle_PlayerCanUseFaction(playerid, vehicleid)
 {
 	// SAPD
 	if	(
-			IsVehicleFromFaction(vehicleid, FACTION_SAPD) && 
-			GetPlayerFactionId(playerid) == FACTION_SAPD
+			Vehicle_IsFromFaction(vehicleid, FACTION_SAPD) && 
+			Account_GetFactionId(playerid) == FACTION_SAPD
 		)
         return true;
 
 	// MEPD
 	if	(
-			IsVehicleFromFaction(vehicleid, FACTION_MEPD) && 
-			GetPlayerFactionId(playerid) == FACTION_MEPD
+			Vehicle_IsFromFaction(vehicleid, FACTION_MEPD) && 
+			Account_GetFactionId(playerid) == FACTION_MEPD
 		)
         return true;
     

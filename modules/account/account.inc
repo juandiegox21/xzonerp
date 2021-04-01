@@ -258,92 +258,84 @@ public OnLoginTimeout(playerid)
 	return 1;
 }
 
-forward GetPlayerSqlId(playerid);
-stock GetPlayerSqlId(playerid)
+stock Account_GetSqlId(playerid) 
 {
 	return Player[playerid][pId];
 }
 
-forward GetPlayerJobId(playerid);
-stock GetPlayerJobId(playerid)
-{
+stock Account_GetJobId(playerid) {
 	return Player[playerid][pJobId];
 }
 
 //@TODO
-forward GetPlayerJobName(playerid);
-stock GetPlayerJobName(playerid)
+stock Account_GetJobName(playerid)
 {
 	return Player[playerid][pJobId];
 }
 
-forward GetPlayerFactionId(playerid);
-stock GetPlayerFactionId(playerid)
+stock Account_GetFactionId(playerid)
 {
 	return Player[playerid][pFactionId];
 }
 
-forward GetPlayerFactionRankElevation(playerid);
-stock GetPlayerFactionRankElevation(playerid)
+stock Account_GetFactionRankElevation(playerid)
 {
 	return Player[playerid][pFactionRankElevation];
 }
 
-forward SetPlayerFactionId(playerid, FactionId);
-stock SetPlayerFactionId(playerid, FactionId)
+forward Account_SetFactionId(playerid, FactionId);
+public Account_SetFactionId(playerid, FactionId)
 {
-	if (!FactionIsValid(FactionId)) return SendClientMessage(playerid, COLOR_RED, "[ATENCION] esa faccion no existe");
+	if (!Faction_IsValid(FactionId)) return SendClientMessage(playerid, COLOR_RED, "[ATENCION] esa faccion no existe");
 
 	Player[playerid][pFactionId] = FactionId;
 
 	// Reset rank if faction was set to civil
-	if (IsFactionCivil(FactionId)) {
+	if (Faction_IsCivil(FactionId)) {
 		Player[playerid][pFactionRankElevation] = 0;
 	}
 
 	orm_save(Player[playerid][pORM_ID]);
-	return true;
+
+	return 1;
 }
 
-forward SetPlayerFactionRankElevation(playerid, Elevation);
-stock SetPlayerFactionRankElevation(playerid, Elevation)
+forward Account_SetFactionRankElevation(playerid, Elevation);
+public Account_SetFactionRankElevation(playerid, Elevation)
 {
 	Player[playerid][pFactionRankElevation] = Elevation;
 	orm_save(Player[playerid][pORM_ID]);
 	return true;
 }
 
-forward GetPlayerFactionName(playerid);
-stock GetPlayerFactionName(playerid)
+stock Account_Faction_GetName(playerid)
 {
-	new PlayerFactionId = GetPlayerFactionId(playerid);
+	new PlayerFactionId = Account_GetFactionId(playerid);
 	new FactionNameString[42];
 
-	FactionNameString = GetFactionName(PlayerFactionId);
+	FactionNameString = Faction_GetName(PlayerFactionId);
 	return FactionNameString;
 }
 
-forward PlayerIsFactionLeader(playerid);
-stock PlayerIsFactionLeader(playerid)
+stock Account_IsFactionLeader(playerid)
 {
-	return GetPlayerFactionRankElevation(playerid) == 4;
+	return Account_GetFactionRankElevation(playerid) == 4;
 }
 
-forward GetPlayerRentedVehicleId(playerid);
-stock GetPlayerRentedVehicleId(playerid)
+stock Account_GetRentedVehicleId(playerid)
 {
 	return Player[playerid][pVehicleRentedId];
 }
 
-forward SetPlayerRentedVehicleId(playerid, vehicleid);
-public SetPlayerRentedVehicleId(playerid, vehicleid)
+forward Account_SetRentedVehicleId(playerid, vehicleid);
+public Account_SetRentedVehicleId(playerid, vehicleid)
 {
 	Player[playerid][pVehicleRentedId] = vehicleid;
 	orm_save(Player[playerid][pORM_ID]);
+
 	return 1;
 }
 
-forward IsPlayerLoggedIn(playerid);
 stock IsPlayerLoggedIn(playerid)
 {
 	return Player[playerid][pIsLoggedIn];

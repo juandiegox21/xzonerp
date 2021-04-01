@@ -2,10 +2,10 @@ CMD:cuenta(playerid, params[])
 {
     new 
         string[240],
-        FactionId = GetPlayerFactionId(playerid),
-        PlayerFactionRankElevation = GetPlayerFactionRankElevation(playerid);
+        FactionId = Account_GetFactionId(playerid),
+        PlayerFactionRankElevation = Account_GetFactionRankElevation(playerid);
 
-    format(string, sizeof string, "Faccion Nombre: %s | Faccion Rango: %s", GetPlayerFactionName(playerid), GetFactionRankName(FactionId, PlayerFactionRankElevation));
+    format(string, sizeof string, "Faccion Nombre: %s | Faccion Rango: %s", Account_Faction_GetName(playerid), Faction_GetRankName(FactionId, PlayerFactionRankElevation));
     SendClientMessage(playerid, COLOR_ORANGE, string);
     return 1;
 }
@@ -72,12 +72,12 @@ static ListHelpCommands(playerid, itemId)
         case 4:
         {
             // Player doesn't have a job
-            if (GetPlayerJobId(playerid) < 1) {
+            if (Account_GetJobId(playerid) < 1) {
                 return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: No tienes un trabajo.");
             }
 
             SendClientMessage(playerid, COLOR_ORANGE, "[CMDS]: Trabajos >");
-            GetJobCommands(playerid, GetPlayerJobName(playerid));
+            GetJobCommands(playerid, Account_GetJobName(playerid));
             return 1;
         }
 
@@ -105,10 +105,10 @@ static ListHelpCommands(playerid, itemId)
         case 8:
         {
             // Player is not part of a faction
-            if (GetPlayerFactionId(playerid) < 1)
+            if (Account_GetFactionId(playerid) < 1)
                 return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: No perteneces a una faccion.");
                 
-            GetFactionCommands(playerid, GetPlayerFactionName(playerid));
+            GetFactionCommands(playerid, Account_Faction_GetName(playerid));
             return 1;
         }
 
@@ -157,22 +157,22 @@ CMD:aceptar(playerid, params[])
         if (FactionRecruitingId == 0)
             return SendClientMessage(playerid, COLOR_RED, "[ATENCION] Nadie te ha ofrecido formar parte de su faccion");
         
-        else if (GetPlayerFactionId(playerid) != FACTION_CIVIL)
+        else if (Account_GetFactionId(playerid) != FACTION_CIVIL)
             return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: Ya perteneces a una faccion, renuncia a tu faccion antes de aceptar una nueva invitacion.");
 
 		else if(!GetPlayersProx(5.0, playerid, GetPVarInt(playerid, "FactionRecruitingLeaderId"))) {
             return SendClientMessage(playerid, COLOR_RED, "[ATENCION] La persona que te invito a su faccion esta muy lejos de ti.");
         }
 
-        SetPlayerFactionId(playerid, FactionRecruitingId);
-        SetPlayerFactionRankElevation(playerid, 0);
+        Account_SetFactionId(playerid, FactionRecruitingId);
+        Account_SetFactionRankElevation(playerid, 0);
 
         new string[120];
-        format(string, sizeof string, "[ATENCION] Ahora eres miembro de la faccion: %s", GetFactionName(FactionRecruitingId));
+        format(string, sizeof string, "[ATENCION] Ahora eres miembro de la faccion: %s", Faction_GetName(FactionRecruitingId));
         SendClientMessage(playerid, COLOR_DODGER_BLUE, string);
 
-        format(string, sizeof string, "[%s] %s se ha unido", GetFactionName(FactionRecruitingId), GetPlayerNameRP(playerid));
-        SendMessageToFactionMembers(playerid, FactionRecruitingId, string);
+        format(string, sizeof string, "[%s] %s se ha unido", Faction_GetName(FactionRecruitingId), GetPlayerNameRP(playerid));
+        Faction_SendMessageToMembers(playerid, FactionRecruitingId, string);
 
         DeletePVar(playerid, "FactionRecruitingId");
         DeletePVar(playerid, "FactionRecruitingLeaderId");
@@ -207,7 +207,7 @@ CMD:rechazar(playerid, params[])
         format(string, sizeof string, "[FACCIONES] %s ha rechazado unirse a tu faccion", GetPlayerNameRP(playerid));
         SendClientMessage(FactionRecruitingLeaderId, COLOR_DODGER_BLUE, string);
 
-        format(string, sizeof string, "[ATENCION] Has rechazado unirte a %s", GetFactionName(FactionRecruitingId));
+        format(string, sizeof string, "[ATENCION] Has rechazado unirte a %s", Faction_GetName(FactionRecruitingId));
         SendClientMessage(playerid, COLOR_DODGER_BLUE, string);
 
         DeletePVar(playerid, "FactionRecruitingId");
