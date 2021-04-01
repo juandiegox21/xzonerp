@@ -13,9 +13,10 @@
 #define COLOR_YELLOW_LIGHT		0xfdfe8bFF
 #define COLOR_DODGER_BLUE		0x1e90ffFF
 // Inline colors can be used inside a string
-#define COLOR_WHITE_INLINE		"{FFFFFF}"
-#define COLOR_ORANGE_INLINE		"{ff8c00}"
-#define COLOR_DODGER_BLUE_INLINE "{1e90ff}"
+#define COLOR_WHITE_INLINE			"{FFFFFF}"
+#define COLOR_ORANGE_INLINE			"{ff8c00}"
+#define COLOR_DODGER_BLUE_INLINE	"{1e90ff}"
+#define COLOR_GREEN_INLINE 			"{1eb032}"
 
 // for ProxDetector
 #define COLOR_FADE1 		0xE6E6E6E6
@@ -23,6 +24,11 @@
 #define COLOR_FADE3 		0xAAAAAAAA
 #define COLOR_FADE4 		0x8C8C8C8C
 #define COLOR_FADE5 		0x6E6E6E6E
+
+// VEHICLES
+#define MIN_VEHICLE_HEALTH 350 // Less than 350 of health for a car will set it up on fire, with this we can avoid cars from setting up on fire.
+#define MAX_VEHICLE_PUBLIC 73 // Maximum of public cars such as jobs, and factions. 
+#define VEHICLE_RESPAWN_DELAY 3600 // 1h
 
 hook OnGameModeInit() 
 {

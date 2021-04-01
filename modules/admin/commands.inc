@@ -1,6 +1,5 @@
 CMD:hacerlider(playerid, params[])
 {
-	if(!IsPlayerConnected(playerid)) return SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION] "COLOR_WHITE_INLINE" Debes estar logueado para usar este comando");
     if(sscanf(params, "d", params[0])) return SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION] "COLOR_WHITE_INLINE"/hacerlider [ID]");
     
     new
@@ -39,4 +38,20 @@ CMD:hacerlider(playerid, params[])
     Dialog_ShowCallback(playerid, using inline DialogAvailableFactions, DIALOG_STYLE_LIST, DialogTitleString, GetFactions(), "Asignar", "Cancelar");
 
     return 1;
+}
+
+CMD:gotocor(playerid, params[])
+{
+	new 
+        Float: pos[3], 
+        int;
+
+    if(sscanf(params, "fffd", pos[0], pos[1], pos[2], int))
+        return SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION]: "COLOR_WHITE_INLINE" /gotocor [coordenada X] [coordenada Y] [coordenada Z] [interior]");
+    
+    SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION]: "COLOR_WHITE_INLINE" Fuiste teletransportado a las coordenadas establecidas.");
+    SetPlayerPos(playerid, pos[0], pos[1], pos[2]);
+    SetPlayerInterior(playerid, int);
+    
+	return 1;
 }
