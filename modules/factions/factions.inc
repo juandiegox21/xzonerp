@@ -9,8 +9,7 @@
 #define FACTION_MEPD    2
 #define FACTION_CNN     3
 
-forward GetFactions();
-stock GetFactions()
+stock Faction_GetList()
 {
     new 
         FactionsString[300],
@@ -19,7 +18,7 @@ stock GetFactions()
     for (new FactionId = 0; FactionId < MAX_FACTIONS; FactionId++) {
         new FactionName[42];
 
-        FactionName = GetFactionName(FactionId);
+        FactionName = Faction_GetName(FactionId);
 
         if (strcmp(FactionName, "Unassigned")) {
             format(FactionDescription, sizeof FactionDescription, "(ID: %d) %s\n", FactionId, FactionName);
@@ -30,8 +29,7 @@ stock GetFactions()
     return FactionsString;
 }
 
-forward FactionIsValid(const FactionId);
-stock FactionIsValid(const FactionId)
+stock Faction_IsValid(const FactionId)
 {
     if (FactionId < 0 || FactionId > MAX_FACTIONS) {
         return false;
@@ -40,8 +38,7 @@ stock FactionIsValid(const FactionId)
     return true;
 }
 
-forward GetFactionName(const FactionId);
-stock GetFactionName(const FactionId)
+stock Faction_GetName(const FactionId)
 {
     new FactionName[42];
 
@@ -57,17 +54,16 @@ stock GetFactionName(const FactionId)
     return FactionName;
 }
 
-forward GetFactionMembers(FactionId);
-stock GetFactionMembers(FactionId)
+stock Faction_GetMembers(FactionId)
 {
     new 
         MemberDescription[48],
         MembersList[700];
 
     for (new i = 0; i < MAX_PLAYERS; i++) {
-        if (IsPlayerConnected(i) && GetPlayerFactionId(i) == FactionId) {
+        if (IsPlayerConnected(i) && Account_GetFactionId(i) == FactionId) {
             new MemberRankName[120];
-            MemberRankName = GetFactionRankName(FactionId, GetPlayerFactionRankElevation(i));
+            MemberRankName = Faction_GetRankName(FactionId, Account_GetFactionRankElevation(i));
 
             format(MemberDescription, sizeof MemberDescription, "%s - %s\n", GetPlayerNameRP(i), MemberRankName);
             strcat(MembersList, MemberDescription);
@@ -77,23 +73,21 @@ stock GetFactionMembers(FactionId)
     return MembersList;
 }
 
-forward GetFactionRanksName(FactionId);
-stock GetFactionRanksName(FactionId)
+stock Faction_GetRanksName(FactionId)
 {
     new 
         FactionRanksNameString[300],
         FactionRankName[42];
 
     for (new RankElevation = 0; RankElevation < MAX_FACTION_RANK_ELEVATION; RankElevation++) {
-        format(FactionRankName, sizeof FactionRankName, "(Nivel de privilegio: %d) %s\n", RankElevation, GetFactionRankName(FactionId, RankElevation));
+        format(FactionRankName, sizeof FactionRankName, "(Nivel de privilegio: %d) %s\n", RankElevation, Faction_GetRankName(FactionId, RankElevation));
         strcat(FactionRanksNameString, FactionRankName);
     }
 
     return FactionRanksNameString;
 }
 
-forward GetFactionRankName(FactionId, Elevation);
-stock GetFactionRankName(FactionId, Elevation)
+stock Faction_GetRankName(FactionId, Elevation)
 {
     new RankName[120];
 
@@ -138,21 +132,20 @@ stock GetFactionRankName(FactionId, Elevation)
     return RankName;
 }
 
-forward IsFactionCivil(FactionId);
-stock IsFactionCivil(FactionId)
+stock Faction_IsCivil(FactionId)
 {
     return FactionId == FACTION_CIVIL;
 }
 
-forward SendMessageToFactionMembers(SenderId, FactionId, const message[]);
-public SendMessageToFactionMembers(SenderId, FactionId, const message[])
+forward Faction_SendMessageToMembers(SenderId, FactionId, const message[]);
+public Faction_SendMessageToMembers(SenderId, FactionId, const message[])
 {
     new 
         string[320];
 
     for (new i = 0; i < MAX_PLAYERS; i++) {
         if(!IsPlayerConnected(i)) continue;
-        else if (Player[i][pFactionId] != FactionId) continue;
+        else if (Account_GetFactionId(i) != FactionId) continue;
         
         format(string, sizeof(string), "%s", message);
         SendClientMessage(i, COLOR_DODGER_BLUE, string);

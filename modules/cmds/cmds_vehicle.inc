@@ -2,15 +2,15 @@ CMD:motor(playerid,params[])
 {
 	if(GetPlayerState(playerid) != PLAYER_STATE_DRIVER) return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: No estas en un vehiculo como conductor.");
 	new vehicleid = GetPlayerVehicleID(playerid);
-	if(IsABike(vehicleid)) return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: Este vehiculo no tiene motor.");
+	if(Vehicle_IsABike(vehicleid)) return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: Este vehiculo no tiene motor.");
     
-	AttemptToTurnVehicleEngineOn(playerid, vehicleid);
+	Vehicle_AttemptToTurnEngineOn(playerid, vehicleid);
 	return 1;
 }
 
 CMD:chimbo(playerid, params[])
 {
-	GetAllRentalVehicles();
+	Vehicle_GetAllRentals();
 	return 1;
 }
 
@@ -25,19 +25,19 @@ CMD:rentar(playerid,params[])
     if(!strcmp(params, "bici", true, 4)) {
 		new vehicleid = GetPlayerVehicleID(playerid);
 
-		if (vehicleid == 0 || !IsVehicleRental(vehicleid)) {
+		if (vehicleid == 0 || !Vehicle_IsRental(vehicleid)) {
 			return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: No estas en un vehiculo que se pueda rentar.");
 		}
 
 		// Vehicle is already rented but by someone else
-		if (IsVehicleRented(vehicleid) && !PlayerCanUseVehicleRental(playerid, vehicleid))
+		if (Vehicle_IsRented(vehicleid) && !Vehicle_PlayerCanUseRental(playerid, vehicleid))
 			return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: Esta bici ya esta siendo rentada por otro jugador");
 
-		else if (IsVehicleRented(vehicleid) && PlayerCanUseVehicleRental(playerid, vehicleid)) {
+		else if (Vehicle_IsRented(vehicleid) && Vehicle_PlayerCanUseRental(playerid, vehicleid)) {
 			return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: Extender?");
 		}
 
-		else if (!IsVehicleRented(vehicleid) && !PlayerCanUseVehicleRental(playerid, vehicleid) && GetPlayerRentedVehicleId(playerid) > 0 ) {
+		else if (!Vehicle_IsRented(vehicleid) && !Vehicle_PlayerCanUseRental(playerid, vehicleid) && Account_GetRentedVehicleId(playerid) > 0 ) {
 			inline DialogUnrentBike(id, dialogid, response, listitem, string: inputtext[]) {
 				#pragma unused id, dialogid, listitem, inputtext
 				if (!response) {
@@ -45,10 +45,10 @@ CMD:rentar(playerid,params[])
 					return 1;
 				}
 
-				new RentedVehicleId = GetPlayerRentedVehicleId(playerid);
+				new RentedVehicleId = Account_GetRentedVehicleId(playerid);
 
-				SetPlayerRentedVehicleId(playerid, 0);
-				SetVehicleRenterSqlId(RentedVehicleId, -1);
+				Account_SetRentedVehicleId(playerid, 0);
+				Vehicle_SetRenterSqlId(RentedVehicleId, -1);
 
 				SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION]: "COLOR_WHITE_INLINE" Has desalquilado tu bici anterior, ya puedes alquilar una nueva");
 
@@ -69,8 +69,8 @@ CMD:rentar(playerid,params[])
 				return 1;
 			}
 
-			SetPlayerRentedVehicleId(playerid, vehicleid);
-			SetVehicleRenterSqlId(vehicleid, GetPlayerSqlId(playerid));
+			Account_SetRentedVehicleId(playerid, vehicleid);
+			Vehicle_SetRenterSqlId(vehicleid, Account_GetSqlId(playerid));
 		
 			SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION]: "COLOR_WHITE_INLINE" Has alquilado esta bici por 30 minutos");
 			SendClientMessage(playerid, COLOR_ORANGE,

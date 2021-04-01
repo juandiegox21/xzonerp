@@ -16,26 +16,26 @@ CMD:hacerlider(playerid, params[])
             FactionId = listitem,
             Elevation = 4; // MAX elevation
             
-        SetPlayerFactionId(playerid2, FactionId);
+        Account_SetFactionId(playerid2, FactionId);
 
-        format(string, sizeof string, "[ATENCION] Ahora eres miembro de la faccion: %s", GetFactionName(FactionId));
+        format(string, sizeof string, "[ATENCION] Ahora eres miembro de la faccion: %s", Faction_GetName(FactionId));
         SendClientMessage(playerid2, COLOR_DODGER_BLUE, string);
 
         // Only promote rank when the faction is not CIVIL
         if (FactionId > 0) {
-            SetPlayerFactionRankElevation(playerid2, Elevation);
+            Account_SetFactionRankElevation(playerid2, Elevation);
 
-            format(string, sizeof string, "[ATENCION] Has sido promovido a rango %s", GetFactionRankName(FactionId, Elevation));
+            format(string, sizeof string, "[ATENCION] Has sido promovido a rango %s", Faction_GetRankName(FactionId, Elevation));
             SendClientMessage(playerid2, COLOR_DODGER_BLUE, string);
         }
 
-        format(string, sizeof string, "[ATENCION] Has hecho lider a %s de la faccion %s", GetPlayerNameRP(playerid2), GetFactionName(FactionId));
+        format(string, sizeof string, "[ATENCION] Has hecho lider a %s de la faccion %s", GetPlayerNameRP(playerid2), Faction_GetName(FactionId));
         SendClientMessage(playerid, COLOR_DODGER_BLUE, string);
     }
 
     new DialogTitleString[120];
     format(DialogTitleString, sizeof DialogTitleString, "De que faccion %s sera lider?", GetPlayerNameRP(playerid2));
-    Dialog_ShowCallback(playerid, using inline DialogAvailableFactions, DIALOG_STYLE_LIST, DialogTitleString, GetFactions(), "Asignar", "Cancelar");
+    Dialog_ShowCallback(playerid, using inline DialogAvailableFactions, DIALOG_STYLE_LIST, DialogTitleString, Faction_GetList(), "Asignar", "Cancelar");
 
     return 1;
 }

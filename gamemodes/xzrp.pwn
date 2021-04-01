@@ -29,32 +29,25 @@
 
 #include <izcmd>
 
-// Server
-#include "../modules/server/time.inc"
-#include "../modules/server/core.inc"
-#include "../modules/server/cmd_process.inc"
-#include "../modules/server/mysql.inc" // MySQL connection
+/* ===  Gamemode modules === */
 
-// Player 
-#include "../modules/player/account.inc"
+// Server
+#include <server>
+
+// Account
+#include <account> 
 
 // Factions
-#include "../modules/factions.inc"
+#include <factions>
 
-// Player commands
-#include "../modules/player/cmd_general.inc"
-#include "../modules/player/cmd_chat.inc"
-#include "../modules/player/cmd_faction.inc"
-#include "../modules/player/cmd_vehicle.inc"
-
-// Admin commands
-#include "../modules/admin/commands.inc"
+// Commands
+#include <cmds>
 
 // World
-#include "../modules/world/maps.inc"
+#include <maps>
 
 // Vehicles
-#include "../modules/vehicles.inc"
+#include <vehicles>
 
 //Gamemode
 main()

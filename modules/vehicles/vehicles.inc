@@ -1,12 +1,12 @@
 #include <YSI_Coding\y_hooks>
 
-#include "../modules/vehicles/factions.inc"
-#include "../modules/vehicles/rentals.inc"
+#include <vehicles_factions>
+#include <vehicles_rentals>
 
 hook OnGameModeInit()
 {
-	CreateFactionVehicles();
-	CreateRentalVehicles();
+	Vehicle_CreateFactions();
+	Vehicle_CreateRentals();
     
     return 1;
 }
@@ -17,23 +17,23 @@ hook OnPlayerStateChange(playerid, newstate, oldstate)
     if(oldstate == PLAYER_STATE_ONFOOT && newstate == PLAYER_STATE_DRIVER) {
         new vehicleid = GetPlayerVehicleID(playerid);
 
-		if (IsVehiclePublic(vehicleid) && isVehicleFaction(vehicleid)) {
-			if (!PlayerCanUseVehicleFaction(playerid, vehicleid)) {
+		if (Vehicle_IsPublic(vehicleid) && Vehicle_IsFaction(vehicleid)) {
+			if (!Vehicle_PlayerCanUseFaction(playerid, vehicleid)) {
 				return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: No tienes las llaves de este vehiculo");
 			}
 		}
 
-		else if (IsVehicleJob(vehicleid)) {
+		else if (Vehicle_IsJob(vehicleid)) {
 			// Add conditions for job vehicles
 		}
 		
-		else if (IsVehicleRental(vehicleid)) {
-			if (IsVehicleRented(vehicleid) && !PlayerCanUseVehicleRental(playerid, vehicleid)) {
+		else if (Vehicle_IsRental(vehicleid)) {
+			if (Vehicle_IsRented(vehicleid) && !Vehicle_PlayerCanUseRental(playerid, vehicleid)) {
 				RemovePlayerFromVehicle(playerid);
 				return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: Esta bici ya esta siendo rentada por otro jugador");
 			}
 
-			else if (IsVehicleRented(vehicleid) && PlayerCanUseVehicleRental(playerid, vehicleid)) {
+			else if (Vehicle_IsRented(vehicleid) && Vehicle_PlayerCanUseRental(playerid, vehicleid)) {
 				// @TODO
 				SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION]: "COLOR_WHITE_INLINE" Estas rentando esta bici, tiempo restante de renta: "COLOR_ORANGE_INLINE" 25m");
 				SendClientMessage(playerid, COLOR_ORANGE,
@@ -53,8 +53,7 @@ hook OnPlayerStateChange(playerid, newstate, oldstate)
     return 1;
 }
 
-forward IsABike(vehicleid);
-stock IsABike(vehicleid)
+stock Vehicle_IsABike(vehicleid)
 {
 	new VehicleModel = GetVehicleModel(vehicleid);
 
@@ -64,31 +63,29 @@ stock IsABike(vehicleid)
 	return false;
 }
 
-forward IsVehiclePublic(vehicleid);
-stock IsVehiclePublic(vehicleid)
+stock Vehicle_IsPublic(vehicleid)
 {
     return vehicleid <= MAX_VEHICLE_PUBLIC;
 }
 
 // @TODO
-forward IsVehicleJob(vehicleid);
-stock IsVehicleJob(vehicleid)
+stock Vehicle_IsJob(vehicleid)
 {
 	printf("%d", vehicleid);
     return false;
 }
 
 // @TODO when we add personal vehicles add functionality to verify access to the vehicle
-forward AttemptToTurnVehicleEngineOn(playerid, vehicleid);
-stock AttemptToTurnVehicleEngineOn(playerid, vehicleid)
+forward Vehicle_AttemptToTurnEngineOn(playerid, vehicleid);
+public Vehicle_AttemptToTurnEngineOn(playerid, vehicleid)
 {
-	if (IsVehiclePublic(vehicleid) && isVehicleFaction(vehicleid)) {
-		if (!PlayerCanUseVehicleFaction(playerid, vehicleid)) {
+	if (Vehicle_IsPublic(vehicleid) && Vehicle_IsFaction(vehicleid)) {
+		if (!Vehicle_PlayerCanUseFaction(playerid, vehicleid)) {
 			return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: No tienes las llaves de este vehiculo");
 		}
 	}
 
-	else if (IsVehicleJob(vehicleid)) {
+	else if (Vehicle_IsJob(vehicleid)) {
 		// Add conditions for job vehicles
 	}
 
@@ -129,14 +126,14 @@ stock AttemptToTurnVehicleEngineOn(playerid, vehicleid)
 	ProxDetector(15.0, playerid, string, COLOR_PURPLE, COLOR_PURPLE, COLOR_PURPLE, COLOR_PURPLE, COLOR_PURPLE);
 
 	SetPVarInt(playerid, "TurningEngineOn", 1);
-	defer TurnVehicleEngineOn(playerid, vehicleid);
+	defer Vehicle_TurnEngineOn(playerid, vehicleid);
 	return 1;
 }
 
 /* ------------- TIMERS ------------------ */
 
 // VEHICLES 2 Seconds
-timer TurnVehicleEngineOn[2000](playerid, vehicleid)
+timer Vehicle_TurnEngineOn[2000](playerid, vehicleid)
 {
     new string[128];
 	format(string, sizeof(string), "* %s enciende el motor de su vehiculo.", GetPlayerNameRP(playerid));

@@ -1,3 +1,9 @@
+#include <cmds_general>
+#include <cmds_chat>
+#include <cmds_faction>
+#include <cmds_vehicle>
+#include <cmds_admin>
+
 public OnPlayerCommandPerformed(playerid, cmdtext[], success)
 {
     new string[128];

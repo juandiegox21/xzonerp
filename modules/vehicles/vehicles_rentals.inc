@@ -22,8 +22,8 @@ static const g_arrVehicleRentalData[][e_VehicleRentalData] =
     }
 };
 
-forward CreateRentalVehicles();
-public CreateRentalVehicles()
+forward Vehicle_CreateRentals();
+public Vehicle_CreateRentals()
 {
 	for (new i = 0; i < sizeof(g_arrVehicleRentalData); i++) {
 		g_arrVehicleRentalData[i][e_VehicleId] = 	AddStaticVehicleEx(
@@ -37,11 +37,11 @@ public CreateRentalVehicles()
                                                         VEHICLE_RESPAWN_DELAY
                                                     );
 	}
+
     return 1;
 }
 
-forward IsVehicleRental(vehicleid);
-stock IsVehicleRental(vehicleid)
+stock Vehicle_IsRental(vehicleid)
 {
 	new IsVehRental = false;
 	for (new i = 0; i < sizeof(g_arrVehicleRentalData); i++) {
@@ -57,8 +57,7 @@ stock IsVehicleRental(vehicleid)
     return IsVehRental;
 }
 
-forward IsVehicleRented(vehicleid);
-stock IsVehicleRented(vehicleid)
+stock Vehicle_IsRented(vehicleid)
 {
     new IsVehRented = false;
 	for (new i = 0; i < sizeof(g_arrVehicleRentalData); i++) {
@@ -74,8 +73,7 @@ stock IsVehicleRented(vehicleid)
     return IsVehRented;
 }
 
-forward GetVehicleRentalIndexById(vehicleid);
-stock GetVehicleRentalIndexById(vehicleid)
+stock Vehicle_GetRentalIndexById(vehicleid)
 {
     new Index = -1;
 
@@ -89,26 +87,24 @@ stock GetVehicleRentalIndexById(vehicleid)
     return Index;
 }
 
-forward PlayerCanUseVehicleRental(playerid, vehicleid);
-stock PlayerCanUseVehicleRental(playerid, vehicleid)
+stock Vehicle_PlayerCanUseRental(playerid, vehicleid)
 {
-    if (GetPlayerRentedVehicleId(playerid) == vehicleid)
+    if (Account_GetRentedVehicleId(playerid) == vehicleid)
         return true;
 
     return false;
 }
 
-forward SetVehicleRenterSqlId(vehicleid, RenterId);
-public SetVehicleRenterSqlId(vehicleid, RenterId)
+forward Vehicle_SetRenterSqlId(vehicleid, RenterId);
+public Vehicle_SetRenterSqlId(vehicleid, RenterId)
 {
-    new RentalVehicleIndex = GetVehicleRentalIndexById(vehicleid);
+    new RentalVehicleIndex = Vehicle_GetRentalIndexById(vehicleid);
 
     g_arrVehicleRentalData[RentalVehicleIndex][e_VehicleRenterSqlId] = RenterId;
     return 1;
 }
 
-forward GetAllRentalVehicles();
-stock GetAllRentalVehicles()
+stock Vehicle_GetAllRentals()
 {
     new string[120];
     for (new i = 0; i < sizeof(g_arrVehicleRentalData); i++) {
