@@ -14,6 +14,8 @@ CMD:chimbo(playerid, params[])
 	return 1;
 }
 
+
+// @TODO refactor command, this is imposible to read.
 CMD:rentar(playerid,params[])
 {    
     if(sscanf(params, "s[32]", params)) {
@@ -77,6 +79,11 @@ CMD:rentar(playerid,params[])
 				"[RENTAS]: "COLOR_WHITE_INLINE" Para extender la renta "COLOR_ORANGE_INLINE" /rentar bici"\
 				""COLOR_WHITE_INLINE" el precio es de "COLOR_GREEN_INLINE"$100"COLOR_WHITE_INLINE" por 30 minutos."
 			);
+
+			// The bike will now move
+			new alarm,doors,bonnet,boot,objective;
+			SetVehicleParamsEx(vehicleid, 1, 0, alarm, doors, bonnet, boot, objective);
+
 			// @TODO renting a bike should remove money from the player.
 		}
 
