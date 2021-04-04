@@ -47,10 +47,12 @@ CMD:rentar(playerid,params[])
 					return 1;
 				}
 
-				new RentedVehicleId = Account_GetRentedVehicleId(playerid);
+				new 
+					RentedVehicleId = Account_GetRentedVehicleId(playerid),
+					RentedVehicleIndex = Vehicle_GetRentalIndexById(RentedVehicleId);
 
 				Account_SetRentedVehicleId(playerid, 0);
-				Vehicle_SetRenterSqlId(RentedVehicleId, -1);
+				Vehicle_SetRenterSqlId(RentedVehicleIndex, -1);
 
 				SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION]: "COLOR_WHITE_INLINE" Has desalquilado tu bici anterior, ya puedes alquilar una nueva");
 
@@ -72,7 +74,9 @@ CMD:rentar(playerid,params[])
 			}
 
 			Account_SetRentedVehicleId(playerid, vehicleid);
-			Vehicle_SetRenterSqlId(vehicleid, Account_GetSqlId(playerid));
+
+			new RentedVehicleIndex = Vehicle_GetRentalIndexById(vehicleid);
+			Vehicle_SetRenterSqlId(RentedVehicleIndex, Account_GetSqlId(playerid));
 		
 			SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION]: "COLOR_WHITE_INLINE" Has alquilado esta bici por 30 minutos");
 			SendClientMessage(playerid, COLOR_ORANGE,

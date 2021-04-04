@@ -1,6 +1,6 @@
 // @TODO We should add more bikes for rental, and also the rental vehicles should expire when they are not being rented anymore
 
-#define RENTAL_EXPIRATION_TIME_IN_SECONDS 20 // 30m
+#define RENTAL_EXPIRATION_TIME_IN_SECONDS 60 // 30m
 
 enum e_VehicleRentalData
 {
@@ -24,10 +24,7 @@ static const g_arrVehicleRentalData[][e_VehicleRentalData] =
         -1, -1, 0, 509, {1727.6307, -1862.8716, 13.0953, 0.00}, {126, 126}
     }
 };
-
-static
-	Timer:RentalExpirationTimer[sizeof g_arrVehicleRentalData];
-
+    
 forward Vehicle_CreateRentals();
 public Vehicle_CreateRentals()
 {
@@ -44,6 +41,7 @@ public Vehicle_CreateRentals()
                                                     );
 	}
 
+    repeat CheckRentalExpirationTimer();
     return 1;
 }
 
@@ -101,27 +99,23 @@ stock Vehicle_PlayerCanUseRental(playerid, vehicleid)
     return false;
 }
 
-forward Vehicle_SetRenterSqlId(vehicleid, RenterSqlId);
-public Vehicle_SetRenterSqlId(vehicleid, RenterSqlId)
+forward Vehicle_SetRenterSqlId(index, RenterSqlId);
+public Vehicle_SetRenterSqlId(index, RenterSqlId)
 {
-    new RentalVehicleIndex = Vehicle_GetRentalIndexById(vehicleid);
     // Renter
-
-    g_arrVehicleRentalData[RentalVehicleIndex][e_VehicleRenterSqlId] = RenterSqlId;
+    g_arrVehicleRentalData[index][e_VehicleRenterSqlId] = RenterSqlId;
     
     // If the renter is invalid
     if (RenterSqlId == -1) {
         // Respawn vehicle
-        SetVehicleToRespawn(g_arrVehicleRentalData[RentalVehicleIndex][e_VehicleId]);
+        SetVehicleToRespawn(g_arrVehicleRentalData[index][e_VehicleId]);
         // Reset expiration time
-        g_arrVehicleRentalData[RentalVehicleIndex][e_VehicleRentalExpiration] = 0;
+        g_arrVehicleRentalData[index][e_VehicleRentalExpiration] = 0;
         return 1;
     }
 
     // Set Expiration time
-    g_arrVehicleRentalData[RentalVehicleIndex][e_VehicleRentalExpiration] = RENTAL_EXPIRATION_TIME_IN_SECONDS;
-    // Timer to check if expiration time is up
-    RentalExpirationTimer[RentalVehicleIndex] = repeat CheckRentalExpirationTimer(RentalVehicleIndex);    
+    g_arrVehicleRentalData[index][e_VehicleRentalExpiration] = RENTAL_EXPIRATION_TIME_IN_SECONDS;
 
     return 1;
 }
@@ -141,53 +135,43 @@ stock Vehicle_GetAllRentals()
 
 /* ------------- TIMERS ------------------ */
 // @TODO  refactor this is a mess
-// Runs every second
-timer CheckRentalExpirationTimer[1000](RentalVehicleIndex)
+// Runs every 1 minute
+timer CheckRentalExpirationTimer[10000]()
 {
-    // Vehicle is not being rented anymore
-    if (g_arrVehicleRentalData[RentalVehicleIndex][e_VehicleRenterSqlId] == -1) {
-        // Reset vehicle rental expiration
-        g_arrVehicleRentalData[RentalVehicleIndex][e_VehicleRentalExpiration] = 0;
+    for (new i = 0; i < sizeof g_arrVehicleRentalData; i++) {
+        // Vehicle is not being rented anymore
+        if (g_arrVehicleRentalData[i][e_VehicleRenterSqlId] == -1 && g_arrVehicleRentalData[i][e_VehicleRentalExpiration] > 0) {
+            // Reset vehicle rental expiration
+            Vehicle_SetRenterSqlId(i, -1);
+        }
 
-        // Stop this timer
-        stop RentalExpirationTimer[RentalVehicleIndex];
-    }
-
-    // Vehicle is being rented and rented time is up
-    if  (
-            g_arrVehicleRentalData[RentalVehicleIndex][e_VehicleRenterSqlId] > 0 && 
-            g_arrVehicleRentalData[RentalVehicleIndex][e_VehicleRentalExpiration] < 1
-        ) {
-            new playerid = Account_GetPlayerIdBySqlId(g_arrVehicleRentalData[RentalVehicleIndex][e_VehicleRenterSqlId]);
+        // Vehicle is being rented and rented time is up
+        if  (g_arrVehicleRentalData[i][e_VehicleRenterSqlId] > 0 && g_arrVehicleRentalData[i][e_VehicleRentalExpiration] < 1) {
+            new playerid = Account_GetPlayerIdBySqlId(g_arrVehicleRentalData[i][e_VehicleRenterSqlId]);
 
             if (playerid > -1) {
                 SendClientMessage(playerid, COLOR_ORANGE, "[RENTAS] "COLOR_WHITE_INLINE"El tiempo de renta de tu bici ha expirado");
             }
+            
+            Vehicle_SetRenterSqlId(i, -1);
+        }
 
-            // Reset vehicle rental expiration
-            g_arrVehicleRentalData[RentalVehicleIndex][e_VehicleRentalExpiration] = 0;
-            // Set vehicle renter to invalid
-            g_arrVehicleRentalData[RentalVehicleIndex][e_VehicleRenterSqlId] = -1;
-
-            // Respawn vehicle
-            SetVehicleToRespawn(g_arrVehicleRentalData[RentalVehicleIndex][e_VehicleId]);
-
-            // Stop this timer
-            stop RentalExpirationTimer[RentalVehicleIndex];
-    }
-
-    // Vehicle is being rented and the rented time is not up yet
-    if  (
-            g_arrVehicleRentalData[RentalVehicleIndex][e_VehicleRenterSqlId] > 0 && 
-            g_arrVehicleRentalData[RentalVehicleIndex][e_VehicleRentalExpiration] > 0
-        ) {
-            new playerid = Account_GetPlayerIdBySqlId(g_arrVehicleRentalData[RentalVehicleIndex][e_VehicleRenterSqlId]);
-
-            if (playerid > -1 && g_arrVehicleRentalData[RentalVehicleIndex][e_VehicleRentalExpiration] == 5) {
-                SendClientMessage(playerid, COLOR_ORANGE, "[RENTAS] "COLOR_WHITE_INLINE"El tiempo de renta de tu bici expirara en 5 minutos, vuelve a tu bici para extender el tiempo de renta.");
+        // Vehicle is being rented and the rented time is not up yet
+        if  (g_arrVehicleRentalData[i][e_VehicleRenterSqlId] > 0 && g_arrVehicleRentalData[i][e_VehicleRentalExpiration] > 0) {
+            new playerid = Account_GetPlayerIdBySqlId(g_arrVehicleRentalData[i][e_VehicleRenterSqlId]);
+            // 300 seconds = 5 minutes
+            // 240 seconds = 4 mins
+            // When the expiration is less than 5 mins but more than 4 mins, advise the player to extend their rent.
+            if  (
+                    playerid > -1 &&
+                    g_arrVehicleRentalData[i][e_VehicleRentalExpiration] <= 30 &&
+                    g_arrVehicleRentalData[i][e_VehicleRentalExpiration] > 20
+                ) {
+                SendClientMessage(playerid, COLOR_ORANGE, "[RENTAS] "COLOR_WHITE_INLINE"El tiempo de renta de tu bici expirara en 5 minutos");
             }
 
-            // Substract 1 second
-            g_arrVehicleRentalData[RentalVehicleIndex][e_VehicleRentalExpiration] -= 1;
+            // Substract 60 seconds
+            g_arrVehicleRentalData[i][e_VehicleRentalExpiration] -= 10;
+        }
     }
 }
