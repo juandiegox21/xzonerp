@@ -48,11 +48,9 @@ public Vehicle_CreateRentals()
 stock Vehicle_IsRental(vehicleid)
 {
 	new IsVehRental = false;
-	for (new i = 0; i < sizeof(g_arrVehicleRentalData); i++) {
-		if 	(
-				g_arrVehicleRentalData[i][e_VehicleId] == vehicleid
-			) {
 
+	for (new i = 0; i < sizeof(g_arrVehicleRentalData); i++) {
+		if 	(g_arrVehicleRentalData[i][e_VehicleId] == vehicleid) {
 			IsVehRental = true;
 			break;
 		}
@@ -67,7 +65,7 @@ stock Vehicle_IsRented(vehicleid)
 	for (new i = 0; i < sizeof(g_arrVehicleRentalData); i++) {
 		if 	(
                 g_arrVehicleRentalData[i][e_VehicleId] == vehicleid &&
-                g_arrVehicleRentalData[i][e_VehicleRenterSqlId] > -1
+                g_arrVehicleRentalData[i][e_VehicleRenterSqlId] > 0
             ) {
 			IsVehRented = true;
 			break;
@@ -91,7 +89,7 @@ stock Vehicle_GetRentalIndexById(vehicleid)
     return Index;
 }
 
-stock Vehicle_PlayerCanUseRental(playerid, vehicleid)
+stock Vehicle_RentalBelongsToPlayer(playerid, vehicleid)
 {
     if (Account_GetRentedVehicleId(playerid) == vehicleid)
         return true;
@@ -106,7 +104,7 @@ public Vehicle_SetRenterSqlId(index, RenterSqlId)
     g_arrVehicleRentalData[index][e_VehicleRenterSqlId] = RenterSqlId;
     
     // If the renter is invalid
-    if (RenterSqlId == -1) {
+    if (RenterSqlId < 1) {
         // Respawn vehicle
         SetVehicleToRespawn(g_arrVehicleRentalData[index][e_VehicleId]);
         // Reset expiration time
@@ -118,6 +116,11 @@ public Vehicle_SetRenterSqlId(index, RenterSqlId)
     g_arrVehicleRentalData[index][e_VehicleRentalExpiration] = RENTAL_EXPIRATION_TIME_IN_SECONDS;
 
     return 1;
+}
+
+stock Vehicle_GetVehicleRenterSqlId(index)
+{
+    return  g_arrVehicleRentalData[index][e_VehicleRenterSqlId];
 }
 
 stock Vehicle_GetAllRentals()
@@ -140,7 +143,7 @@ timer CheckRentalExpirationTimer[10000]()
 {
     for (new i = 0; i < sizeof g_arrVehicleRentalData; i++) {
         // Vehicle is not being rented anymore
-        if (g_arrVehicleRentalData[i][e_VehicleRenterSqlId] == -1 && g_arrVehicleRentalData[i][e_VehicleRentalExpiration] > 0) {
+        if (g_arrVehicleRentalData[i][e_VehicleRenterSqlId] < 1 && g_arrVehicleRentalData[i][e_VehicleRentalExpiration] > 0) {
             // Reset vehicle rental expiration
             Vehicle_SetRenterSqlId(i, -1);
         }

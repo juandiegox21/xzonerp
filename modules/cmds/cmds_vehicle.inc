@@ -27,19 +27,29 @@ CMD:rentar(playerid,params[])
     if(!strcmp(params, "bici", true, 4)) {
 		new vehicleid = GetPlayerVehicleID(playerid);
 
-		if (vehicleid == 0 || !Vehicle_IsRental(vehicleid)) {
+		// Vehicle is not a rental
+		if (!Vehicle_IsRental(vehicleid)) {
 			return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: No estas en un vehiculo que se pueda rentar.");
 		}
 
-		// Vehicle is already rented but by someone else
-		if (Vehicle_IsRented(vehicleid) && !Vehicle_PlayerCanUseRental(playerid, vehicleid))
+		// Vehicle is already rented by someone else
+		if (Vehicle_IsRented(vehicleid) && !Vehicle_RentalBelongsToPlayer(playerid, vehicleid))
 			return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: Esta bici ya esta siendo rentada por otro jugador");
 
-		else if (Vehicle_IsRented(vehicleid) && Vehicle_PlayerCanUseRental(playerid, vehicleid)) {
+		// Vehicle is rented to current player, which means player can extend this rental time
+		if (Vehicle_IsRented(vehicleid) && Vehicle_RentalBelongsToPlayer(playerid, vehicleid)) {
 			return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: Extender?");
 		}
 
-		else if (!Vehicle_IsRented(vehicleid) && !Vehicle_PlayerCanUseRental(playerid, vehicleid) && Account_GetRentedVehicleId(playerid) > 0 ) {
+		new RentedVehiclePlayerIndex = Vehicle_GetRentalIndexById(Account_GetRentedVehicleId(playerid));
+
+		if (
+				Account_GetRentedVehicleId(playerid) > 0 &&
+				!Vehicle_IsRented(vehicleid) &&
+				vehicleid != Account_GetRentedVehicleId(playerid) &&
+				Vehicle_GetVehicleRenterSqlId(RentedVehiclePlayerIndex) == Account_GetSqlId(playerid)
+			) {
+
 			inline DialogUnrentBike(id, dialogid, response, listitem, string: inputtext[]) {
 				#pragma unused id, dialogid, listitem, inputtext
 				if (!response) {
@@ -63,9 +73,10 @@ CMD:rentar(playerid,params[])
 
 			// Give the user the option to unrent a previous rented vehicle.
 			Dialog_ShowCallback(playerid, using inline DialogUnrentBike, DIALOG_STYLE_MSGBOX, "Quieres desalquilar tu bici anterior?", "Ya estas rentando una bici, sin embargo puedes desalquilar tu bici anterior para alquilar esta nueva.", "Desalquilar", "Cancelar");
+		
 			return 1;
 		}
-		
+
 		inline DialogRentBike(id, dialogid, response, listitem, string: inputtext[]) {
 			#pragma unused id, dialogid, listitem, inputtext
 			if (!response) {
