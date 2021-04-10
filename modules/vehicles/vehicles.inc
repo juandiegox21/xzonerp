@@ -37,8 +37,16 @@ hook OnPlayerStateChange(playerid, newstate, oldstate)
 			}
 
 			if (Vehicle_IsRented(vehicleid) && Vehicle_RentalBelongsToPlayer(playerid, vehicleid)) {
-				// @TODO
-				SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION]: "COLOR_WHITE_INLINE" Estas rentando esta bici, tiempo restante de renta: "COLOR_ORANGE_INLINE" 25m");
+				
+				new 
+					string[120],
+					index = Vehicle_GetRentalIndexById(vehicleid);
+
+				new rentingTimeLeft = Vehicle_GetRentingTimeLeft(index);
+
+				format(string, sizeof string, "[ATENCION]: "COLOR_WHITE_INLINE" Estas rentando esta bici, tiempo restante de renta: "COLOR_ORANGE_INLINE" %d m", rentingTimeLeft);
+				SendClientMessage(playerid, COLOR_ORANGE, string);
+				
 				SendClientMessage(playerid, COLOR_ORANGE,
 					"[RENTAS]: "COLOR_WHITE_INLINE" Para extender la renta "COLOR_ORANGE_INLINE" /rentar bici"\
 					""COLOR_WHITE_INLINE" el precio es de "COLOR_GREEN_INLINE"$100"COLOR_WHITE_INLINE" por 30 minutos."

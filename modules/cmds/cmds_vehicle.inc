@@ -38,16 +38,42 @@ CMD:rentar(playerid,params[])
 
 		// Vehicle is rented to current player, which means player can extend this rental time
 		if (Vehicle_IsRented(vehicleid) && Vehicle_RentalBelongsToPlayer(playerid, vehicleid)) {
-			return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: Extender?");
+			inline DialogExtendRentedBike(id, dialogid, response, listitem, string: inputtext[]) {
+				#pragma unused id, dialogid, listitem, inputtext
+				if (!response) {
+					return 1;
+				}
+
+				new 
+					index = Vehicle_GetRentalIndexById(vehicleid),
+					rentTime = 1; //30m
+
+				Vehicle_ExtendRentalTime(index, rentTime);
+
+				SendClientMessage(playerid, COLOR_ORANGE, "[RENTAS]: "COLOR_WHITE_INLINE" Has extendido la renta de esta bici por 30 minutos mas");
+				
+				// @TODO extending the rent of a bike should remove money from the player.
+			}
+
+			new 
+				string[170],
+				index = Vehicle_GetRentalIndexById(vehicleid);
+
+			new rentingTimeLeft = Vehicle_GetRentingTimeLeft(index);
+
+			format(string, sizeof string, ""COLOR_WHITE_INLINE"Quieres extender la renta de esta bici por 30 minutos mas? ("COLOR_ORANGE_INLINE" tiempo restante: %d m"COLOR_WHITE_INLINE") el precio es de "COLOR_GREEN_INLINE"$100.", rentingTimeLeft);
+
+			Dialog_ShowCallback(playerid, using inline DialogExtendRentedBike, DIALOG_STYLE_MSGBOX, "Extender renta de bici", string, "Extender", "Cancelar");
+			return 1;
 		}
 
 		new RentedVehiclePlayerIndex = Vehicle_GetRentalIndexById(Account_GetRentedVehicleId(playerid));
 
-		if (
+		if  (
 				Account_GetRentedVehicleId(playerid) > 0 &&
 				!Vehicle_IsRented(vehicleid) &&
 				vehicleid != Account_GetRentedVehicleId(playerid) &&
-				Vehicle_GetVehicleRenterSqlId(RentedVehiclePlayerIndex) == Account_GetSqlId(playerid)
+				Vehicle_GetRenterSqlId(RentedVehiclePlayerIndex) == Account_GetSqlId(playerid)
 			) {
 
 			inline DialogUnrentBike(id, dialogid, response, listitem, string: inputtext[]) {
@@ -64,7 +90,7 @@ CMD:rentar(playerid,params[])
 				Account_SetRentedVehicleId(playerid, 0);
 				Vehicle_SetRenterSqlId(RentedVehicleIndex, -1);
 
-				SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION]: "COLOR_WHITE_INLINE" Has desalquilado tu bici anterior, ya puedes alquilar una nueva");
+				SendClientMessage(playerid, COLOR_ORANGE, "[RENTAS]: "COLOR_WHITE_INLINE" Has desalquilado tu bici anterior, ya puedes alquilar una nueva");
 
 				new string[32];
 				format (string, sizeof string, "bici");
@@ -89,7 +115,7 @@ CMD:rentar(playerid,params[])
 			new RentedVehicleIndex = Vehicle_GetRentalIndexById(vehicleid);
 			Vehicle_SetRenterSqlId(RentedVehicleIndex, Account_GetSqlId(playerid));
 		
-			SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION]: "COLOR_WHITE_INLINE" Has alquilado esta bici por 30 minutos");
+			SendClientMessage(playerid, COLOR_ORANGE, "[RENTAS]: "COLOR_WHITE_INLINE" Has alquilado esta bici por 30 minutos");
 			SendClientMessage(playerid, COLOR_ORANGE,
 				"[RENTAS]: "COLOR_WHITE_INLINE" Para extender la renta "COLOR_ORANGE_INLINE" /rentar bici"\
 				""COLOR_WHITE_INLINE" el precio es de "COLOR_GREEN_INLINE"$100"COLOR_WHITE_INLINE" por 30 minutos."

@@ -1,6 +1,6 @@
 // @TODO We should add more bikes for rental, and also the rental vehicles should expire when they are not being rented anymore
 
-#define RENTAL_EXPIRATION_TIME_IN_SECONDS 60 // 30m
+#define RENTAL_EXPIRATION_TIME_IN_MINS 1 // 30m
 
 enum e_VehicleRentalData
 {
@@ -113,14 +113,25 @@ public Vehicle_SetRenterSqlId(index, RenterSqlId)
     }
 
     // Set Expiration time
-    g_arrVehicleRentalData[index][e_VehicleRentalExpiration] = RENTAL_EXPIRATION_TIME_IN_SECONDS;
+    g_arrVehicleRentalData[index][e_VehicleRentalExpiration] = RENTAL_EXPIRATION_TIME_IN_MINS;
 
     return 1;
 }
 
-stock Vehicle_GetVehicleRenterSqlId(index)
+forward Vehicle_ExtendRentalTime(index, RentTime);
+public Vehicle_ExtendRentalTime(index, RentTime)
+{
+    g_arrVehicleRentalData[index][e_VehicleRentalExpiration] += RentTime;
+}
+
+stock Vehicle_GetRenterSqlId(index)
 {
     return  g_arrVehicleRentalData[index][e_VehicleRenterSqlId];
+}
+
+stock Vehicle_GetRentingTimeLeft(index)
+{
+    return  g_arrVehicleRentalData[index][e_VehicleRentalExpiration];
 }
 
 stock Vehicle_GetAllRentals()
@@ -139,7 +150,7 @@ stock Vehicle_GetAllRentals()
 /* ------------- TIMERS ------------------ */
 // @TODO  refactor this is a mess
 // Runs every 1 minute
-timer CheckRentalExpirationTimer[10000]()
+timer CheckRentalExpirationTimer[60000]()
 {
     for (new i = 0; i < sizeof g_arrVehicleRentalData; i++) {
         // Vehicle is not being rented anymore
@@ -167,14 +178,14 @@ timer CheckRentalExpirationTimer[10000]()
             // When the expiration is less than 5 mins but more than 4 mins, advise the player to extend their rent.
             if  (
                     playerid > -1 &&
-                    g_arrVehicleRentalData[i][e_VehicleRentalExpiration] <= 30 &&
-                    g_arrVehicleRentalData[i][e_VehicleRentalExpiration] > 20
+                    g_arrVehicleRentalData[i][e_VehicleRentalExpiration] <= 5 &&
+                    g_arrVehicleRentalData[i][e_VehicleRentalExpiration] > 4
                 ) {
                 SendClientMessage(playerid, COLOR_ORANGE, "[RENTAS] "COLOR_WHITE_INLINE"El tiempo de renta de tu bici expirara en 5 minutos");
             }
 
-            // Substract 60 seconds
-            g_arrVehicleRentalData[i][e_VehicleRentalExpiration] -= 10;
+            // Substract 1 min
+            g_arrVehicleRentalData[i][e_VehicleRentalExpiration] -= 1;
         }
     }
 }
