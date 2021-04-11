@@ -46,7 +46,14 @@ CMD:rentar(playerid,params[])
 
 				new 
 					index = Vehicle_GetRentalIndexById(vehicleid),
-					rentTime = 1; //30m
+					rentTime = 30; //30m
+
+				if (Vehicle_GetRentingTimeLeft(index) > 5) {
+					new string[160];
+
+					format(string, sizeof string, "[RENTAS] Solo puedes extender el tiempo de renta 5 minutos antes de expirarse. (Tiempo restante: %dm)", Vehicle_GetRentingTimeLeft(index));
+					return SendClientMessage(playerid, COLOR_RED, string);
+				}
 
 				Vehicle_ExtendRentalTime(index, rentTime);
 
@@ -61,7 +68,7 @@ CMD:rentar(playerid,params[])
 
 			new rentingTimeLeft = Vehicle_GetRentingTimeLeft(index);
 
-			format(string, sizeof string, ""COLOR_WHITE_INLINE"Quieres extender la renta de esta bici por 30 minutos mas? ("COLOR_ORANGE_INLINE" tiempo restante: %d m"COLOR_WHITE_INLINE") el precio es de "COLOR_GREEN_INLINE"$100.", rentingTimeLeft);
+			format(string, sizeof string, ""COLOR_WHITE_INLINE"Quieres extender la renta de esta bici por 30 minutos mas? ("COLOR_ORANGE_INLINE"tiempo restante: %dm"COLOR_WHITE_INLINE") el precio es de "COLOR_GREEN_INLINE"$100.", rentingTimeLeft);
 
 			Dialog_ShowCallback(playerid, using inline DialogExtendRentedBike, DIALOG_STYLE_MSGBOX, "Extender renta de bici", string, "Extender", "Cancelar");
 			return 1;

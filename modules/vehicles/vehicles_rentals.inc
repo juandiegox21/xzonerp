@@ -1,6 +1,6 @@
 // @TODO We should add more bikes for rental, and also the rental vehicles should expire when they are not being rented anymore
 
-#define RENTAL_EXPIRATION_TIME_IN_MINS 1 // 30m
+#define RENTAL_EXPIRATION_TIME_IN_MINS 30 // 30m
 
 enum e_VehicleRentalData
 {
@@ -121,7 +121,13 @@ public Vehicle_SetRenterSqlId(index, RenterSqlId)
 forward Vehicle_ExtendRentalTime(index, RentTime);
 public Vehicle_ExtendRentalTime(index, RentTime)
 {
+    if (g_arrVehicleRentalData[index][e_VehicleRentalExpiration] > 5) {
+        return 1;
+    }
+
     g_arrVehicleRentalData[index][e_VehicleRentalExpiration] += RentTime;
+
+    return 1;
 }
 
 stock Vehicle_GetRenterSqlId(index)
@@ -148,7 +154,6 @@ stock Vehicle_GetAllRentals()
 }
 
 /* ------------- TIMERS ------------------ */
-// @TODO  refactor this is a mess
 // Runs every 1 minute
 timer CheckRentalExpirationTimer[60000]()
 {
@@ -173,14 +178,13 @@ timer CheckRentalExpirationTimer[60000]()
         // Vehicle is being rented and the rented time is not up yet
         if  (g_arrVehicleRentalData[i][e_VehicleRenterSqlId] > 0 && g_arrVehicleRentalData[i][e_VehicleRentalExpiration] > 0) {
             new playerid = Account_GetPlayerIdBySqlId(g_arrVehicleRentalData[i][e_VehicleRenterSqlId]);
-            // 300 seconds = 5 minutes
-            // 240 seconds = 4 mins
-            // When the expiration is less than 5 mins but more than 4 mins, advise the player to extend their rent.
+
             if  (
                     playerid > -1 &&
                     g_arrVehicleRentalData[i][e_VehicleRentalExpiration] <= 5 &&
                     g_arrVehicleRentalData[i][e_VehicleRentalExpiration] > 4
                 ) {
+                    
                 SendClientMessage(playerid, COLOR_ORANGE, "[RENTAS] "COLOR_WHITE_INLINE"El tiempo de renta de tu bici expirara en 5 minutos");
             }
 

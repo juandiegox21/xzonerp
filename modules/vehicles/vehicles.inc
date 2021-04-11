@@ -44,7 +44,7 @@ hook OnPlayerStateChange(playerid, newstate, oldstate)
 
 				new rentingTimeLeft = Vehicle_GetRentingTimeLeft(index);
 
-				format(string, sizeof string, "[ATENCION]: "COLOR_WHITE_INLINE" Estas rentando esta bici, tiempo restante de renta: "COLOR_ORANGE_INLINE" %d m", rentingTimeLeft);
+				format(string, sizeof string, "[ATENCION]: "COLOR_WHITE_INLINE" Estas rentando esta bici, tiempo restante de renta: "COLOR_ORANGE_INLINE" %dm", rentingTimeLeft);
 				SendClientMessage(playerid, COLOR_ORANGE, string);
 				
 				SendClientMessage(playerid, COLOR_ORANGE,
