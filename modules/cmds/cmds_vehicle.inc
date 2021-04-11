@@ -8,13 +8,6 @@ CMD:motor(playerid,params[])
 	return 1;
 }
 
-CMD:chimbo(playerid, params[])
-{
-	Vehicle_GetAllRentals();
-	return 1;
-}
-
-
 // @TODO refactor command, this is imposible to read.
 CMD:rentar(playerid,params[])
 {    

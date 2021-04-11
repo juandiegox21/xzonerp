@@ -139,20 +139,6 @@ stock Vehicle_GetRentingTimeLeft(index)
 {
     return  g_arrVehicleRentalData[index][e_VehicleRentalExpiration];
 }
-
-stock Vehicle_GetAllRentals()
-{
-    new 
-        string[500];
-    for (new i = 0; i < sizeof(g_arrVehicleRentalData); i++) {
-        new 
-            playerid = Account_GetPlayerIdBySqlId(g_arrVehicleRentalData[i][e_VehicleRenterSqlId]);
-
-        format(string, sizeof string, "VehicleId: %d | Renter sqlId: %d | Renter playerid: %d| Expiration Time: %d", g_arrVehicleRentalData[i][e_VehicleId], g_arrVehicleRentalData[i][e_VehicleRenterSqlId], playerid, g_arrVehicleRentalData[i][e_VehicleRentalExpiration]);
-		SendClientMessageToAll(-1, string);
-	}
-}
-
 /* ------------- TIMERS ------------------ */
 // Runs every 1 minute
 timer CheckRentalExpirationTimer[60000]()
@@ -184,7 +170,7 @@ timer CheckRentalExpirationTimer[60000]()
                     g_arrVehicleRentalData[i][e_VehicleRentalExpiration] <= 5 &&
                     g_arrVehicleRentalData[i][e_VehicleRentalExpiration] > 4
                 ) {
-                    
+
                 SendClientMessage(playerid, COLOR_ORANGE, "[RENTAS] "COLOR_WHITE_INLINE"El tiempo de renta de tu bici expirara en 5 minutos");
             }
 
