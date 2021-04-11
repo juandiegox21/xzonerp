@@ -263,6 +263,20 @@ stock Account_GetSqlId(playerid)
 	return Player[playerid][pId];
 }
 
+stock Account_GetPlayerIdBySqlId(SqlId)
+{
+	new playerid = -1;
+
+	for (new i = 0; i < MAX_PLAYERS; i++) {
+		if (Player[i][pId] == SqlId) {
+			playerid = i;
+			break;
+		}
+	}
+
+	return playerid;
+}
+
 stock Account_GetJobId(playerid) {
 	return Player[playerid][pJobId];
 }

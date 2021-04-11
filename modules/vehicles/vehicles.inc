@@ -17,37 +17,47 @@ hook OnPlayerStateChange(playerid, newstate, oldstate)
     if(oldstate == PLAYER_STATE_ONFOOT && newstate == PLAYER_STATE_DRIVER) {
         new vehicleid = GetPlayerVehicleID(playerid);
 
+		// Public vehicle is from a faction
 		if (Vehicle_IsPublic(vehicleid) && Vehicle_IsFaction(vehicleid)) {
 			if (!Vehicle_PlayerCanUseFaction(playerid, vehicleid)) {
 				return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: No tienes las llaves de este vehiculo");
 			}
 		}
 
+		// public vehicle is from a job
 		else if (Vehicle_IsJob(vehicleid)) {
 			// Add conditions for job vehicles
 		}
 		
+		// public vehicle is rental
 		else if (Vehicle_IsRental(vehicleid)) {
-			if (Vehicle_IsRented(vehicleid) && !Vehicle_PlayerCanUseRental(playerid, vehicleid)) {
+			if (Vehicle_IsRented(vehicleid) && !Vehicle_RentalBelongsToPlayer(playerid, vehicleid)) {
 				RemovePlayerFromVehicle(playerid);
 				return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: Esta bici ya esta siendo rentada por otro jugador");
 			}
 
-			else if (Vehicle_IsRented(vehicleid) && Vehicle_PlayerCanUseRental(playerid, vehicleid)) {
-				// @TODO
-				SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION]: "COLOR_WHITE_INLINE" Estas rentando esta bici, tiempo restante de renta: "COLOR_ORANGE_INLINE" 25m");
+			if (Vehicle_IsRented(vehicleid) && Vehicle_RentalBelongsToPlayer(playerid, vehicleid)) {
+				
+				new 
+					string[120],
+					index = Vehicle_GetRentalIndexById(vehicleid);
+
+				new rentingTimeLeft = Vehicle_GetRentingTimeLeft(index);
+
+				format(string, sizeof string, "[ATENCION]: "COLOR_WHITE_INLINE" Estas rentando esta bici, tiempo restante de renta: "COLOR_ORANGE_INLINE" %dm", rentingTimeLeft);
+				SendClientMessage(playerid, COLOR_ORANGE, string);
+				
 				SendClientMessage(playerid, COLOR_ORANGE,
 					"[RENTAS]: "COLOR_WHITE_INLINE" Para extender la renta "COLOR_ORANGE_INLINE" /rentar bici"\
 					""COLOR_WHITE_INLINE" el precio es de "COLOR_GREEN_INLINE"$100"COLOR_WHITE_INLINE" por 30 minutos."
 				);
+
 				return 1;
 			}
 
-			else {
-				SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION]: "COLOR_WHITE_INLINE" Esta bici esta a la renta "COLOR_ORANGE_INLINE" /rentar bici "COLOR_WHITE_INLINE" para rentarla");
-				SendClientMessage(playerid, COLOR_ORANGE, "[RENTAS]: "COLOR_WHITE_INLINE" El precio es de "COLOR_GREEN_INLINE"$100"COLOR_WHITE_INLINE" por 30 minutos.");
-				return 1;
-			}
+			SendClientMessage(playerid, COLOR_ORANGE, "[ATENCION]: "COLOR_WHITE_INLINE" Esta bici esta a la renta "COLOR_ORANGE_INLINE" /rentar bici "COLOR_WHITE_INLINE" para rentarla");
+			SendClientMessage(playerid, COLOR_ORANGE, "[RENTAS]: "COLOR_WHITE_INLINE" El precio es de "COLOR_GREEN_INLINE"$100"COLOR_WHITE_INLINE" por 30 minutos.");
+			return 1;
 		}
     }
     return 1;
