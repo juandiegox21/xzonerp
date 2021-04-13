@@ -40,6 +40,9 @@
 // Factions
 #include <factions>
 
+// Jobs
+#include <jobs>
+
 // Commands
 #include <cmds>
 
