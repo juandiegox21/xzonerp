@@ -2,10 +2,11 @@ CMD:cuenta(playerid, params[])
 {
     new 
         string[240],
-        FactionId = Account_GetFactionId(playerid),
-        PlayerFactionRankElevation = Account_GetFactionRankElevation(playerid);
+        PlayerFactionId = Account_GetFactionId(playerid),
+        PlayerFactionRankElevation = Account_GetFactionRankElevation(playerid),
+        PlayerJobId = Account_GetJobId(playerid);
 
-    format(string, sizeof string, "Faccion Nombre: %s | Faccion Rango: %s", Account_Faction_GetName(playerid), Faction_GetRankName(FactionId, PlayerFactionRankElevation));
+    format(string, sizeof string, "Faccion Nombre: %s | Faccion Rango: %s | Trabajo Nombre: %s", Faction_GetName(PlayerFactionId), Faction_GetRankName(PlayerFactionId, PlayerFactionRankElevation), Job_GetName(PlayerJobId));
     SendClientMessage(playerid, COLOR_ORANGE, string);
     return 1;
 }
@@ -71,13 +72,14 @@ static ListHelpCommands(playerid, itemId)
 
         case 4:
         {
+            new PlayerJobId = Account_GetJobId(playerid);
             // Player doesn't have a job
-            if (Account_GetJobId(playerid) < 1) {
+            if (PlayerJobId < 0) {
                 return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: No tienes un trabajo.");
             }
 
             SendClientMessage(playerid, COLOR_ORANGE, "[CMDS]: Trabajos >");
-            GetJobCommands(playerid, Account_GetJobName(playerid));
+            GetJobCommands(playerid, Job_GetName(PlayerJobId));
             return 1;
         }
 
@@ -104,11 +106,12 @@ static ListHelpCommands(playerid, itemId)
 
         case 8:
         {
+            new PlayerFactionId = Account_GetFactionId(playerid);
             // Player is not part of a faction
-            if (Account_GetFactionId(playerid) < 1)
+            if (PlayerFactionId < 1)
                 return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: No perteneces a una faccion.");
                 
-            GetFactionCommands(playerid, Account_Faction_GetName(playerid));
+            GetFactionCommands(playerid, Faction_GetName(PlayerFactionId));
             return 1;
         }
 
@@ -122,7 +125,7 @@ static ListHelpCommands(playerid, itemId)
     return 1;
 }
 
-static GetJobCommands(playerid, jobName)
+static GetJobCommands(playerid, const jobName[])
 {
     new string[120];
     format(string, sizeof string, "[CMDS]: %s >", jobName);
