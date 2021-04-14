@@ -74,7 +74,7 @@ static ListHelpCommands(playerid, itemId)
         {
             new PlayerJobId = Account_GetJobId(playerid);
             // Player doesn't have a job
-            if (PlayerJobId < 0) {
+            if (PlayerJobId < 1) {
                 return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: No tienes un trabajo.");
             }
 
