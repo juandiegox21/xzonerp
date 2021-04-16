@@ -1,6 +1,7 @@
 #include <cmds_general>
 #include <cmds_chat>
 #include <cmds_faction>
+#include <cmds_job>
 #include <cmds_vehicle>
 #include <cmds_admin>
 

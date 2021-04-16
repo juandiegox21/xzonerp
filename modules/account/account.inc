@@ -277,14 +277,20 @@ stock Account_GetPlayerIdBySqlId(SqlId)
 	return playerid;
 }
 
-stock Account_GetJobId(playerid) {
+stock Account_GetJobId(playerid) 
+{
 	return Player[playerid][pJobId];
 }
 
-//@TODO
-stock Account_GetJobName(playerid)
+forward Account_SetJobId(playerid, jobId);
+public Account_SetJobId(playerid, jobId)
 {
-	return Player[playerid][pJobId];
+	if (!Job_IsValid(jobId)) return SendClientMessage(playerid, COLOR_RED, "[ATENCION] ese trabajo no existe");
+
+	Player[playerid][pJobId] = jobId;
+	
+	orm_save(Player[playerid][pORM_ID]);
+	return 1;
 }
 
 stock Account_GetFactionId(playerid)
@@ -320,15 +326,6 @@ public Account_SetFactionRankElevation(playerid, Elevation)
 	Player[playerid][pFactionRankElevation] = Elevation;
 	orm_save(Player[playerid][pORM_ID]);
 	return true;
-}
-
-stock Account_Faction_GetName(playerid)
-{
-	new PlayerFactionId = Account_GetFactionId(playerid);
-	new FactionNameString[42];
-
-	FactionNameString = Faction_GetName(PlayerFactionId);
-	return FactionNameString;
 }
 
 stock Account_IsFactionLeader(playerid)

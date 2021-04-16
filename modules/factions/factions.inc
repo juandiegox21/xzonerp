@@ -1,5 +1,3 @@
-#include <YSI_Coding\y_hooks>
-
 #define MAX_FACTIONS                5
 #define MAX_FACTION_RANK_ELEVATION  5 // Factions can only have 5 ranks
 

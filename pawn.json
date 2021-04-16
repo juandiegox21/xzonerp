@@ -75,6 +75,7 @@
 				"modules/server",
 				"modules/account",
 				"modules/factions",
+				"modules/jobs",
 				"modules/vehicles",
 				"modules/cmds",
 				"modules/maps"
