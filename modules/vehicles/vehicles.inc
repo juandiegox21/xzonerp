@@ -1,6 +1,7 @@
 #include <YSI_Coding\y_hooks>
 
 #include <vehicles_factions>
+#include <vehicles_jobs>
 #include <vehicles_rentals>
 
 hook OnGameModeInit()
@@ -18,7 +19,7 @@ hook OnPlayerStateChange(playerid, newstate, oldstate)
         new vehicleid = GetPlayerVehicleID(playerid);
 
 		// Public vehicle is from a faction
-		if (Vehicle_IsPublic(vehicleid) && Vehicle_IsFaction(vehicleid)) {
+		if (Vehicle_IsFaction(vehicleid)) {
 			if (!Vehicle_PlayerCanUseFaction(playerid, vehicleid)) {
 				return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: No tienes las llaves de este vehiculo");
 			}
@@ -26,7 +27,9 @@ hook OnPlayerStateChange(playerid, newstate, oldstate)
 
 		// public vehicle is from a job
 		else if (Vehicle_IsJob(vehicleid)) {
-			// Add conditions for job vehicles
+			if (!Vehicle_PlayerCanUseJob(playerid, vehicleid)) {
+				return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: No tienes las llaves de este vehiculo");
+			}
 		}
 		
 		// public vehicle is rental
@@ -73,30 +76,20 @@ stock Vehicle_IsABike(vehicleid)
 	return false;
 }
 
-stock Vehicle_IsPublic(vehicleid)
-{
-    return vehicleid <= MAX_VEHICLE_PUBLIC;
-}
-
-// @TODO
-stock Vehicle_IsJob(vehicleid)
-{
-	printf("%d", vehicleid);
-    return false;
-}
-
 // @TODO when we add personal vehicles add functionality to verify access to the vehicle
 forward Vehicle_AttemptToTurnEngineOn(playerid, vehicleid);
 public Vehicle_AttemptToTurnEngineOn(playerid, vehicleid)
 {
-	if (Vehicle_IsPublic(vehicleid) && Vehicle_IsFaction(vehicleid)) {
+	if (Vehicle_IsFaction(vehicleid)) {
 		if (!Vehicle_PlayerCanUseFaction(playerid, vehicleid)) {
 			return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: No tienes las llaves de este vehiculo");
 		}
 	}
 
 	else if (Vehicle_IsJob(vehicleid)) {
-		// Add conditions for job vehicles
+		if (!Vehicle_PlayerCanUseJob(playerid, vehicleid)) {
+			return SendClientMessage(playerid, COLOR_RED, "[ATENCION]: No tienes las llaves de este vehiculo");
+		}
 	}
 
 	else {
