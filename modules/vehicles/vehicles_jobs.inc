@@ -11,7 +11,7 @@ static const g_arrVehicleJobData[][e_VehicleJobData] =
 {
     // ================== TRUCKERS ==================
     {
-        -1, JOB_TRUCKER, 499, {2455.14282, -2113.93774, 13.65593, 90.00}, {0, 1}
+        -1, JOB_TRUCKER_ID, 499, {2455.14282, -2113.93774, 13.65593, 90.00}, {0, 1}
     }
 };
 
@@ -72,8 +72,8 @@ stock Vehicle_PlayerCanUseJob(playerid, vehicleid)
 {
 	// TRUCKER
 	if	(
-			Vehicle_IsFromJob(vehicleid, JOB_TRUCKER) && 
-			Account_GetJobId(playerid) == JOB_TRUCKER
+			Vehicle_IsFromJob(vehicleid, JOB_TRUCKER_ID) && 
+			Account_GetJobId(playerid) == JOB_TRUCKER_ID
 		)
 
         return true;

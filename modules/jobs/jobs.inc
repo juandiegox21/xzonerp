@@ -3,8 +3,8 @@
 #define MAX_JOBS    5
 
 // Jobs
-#define JOB_UNEMPLOYED  0
-#define JOB_TRUCKER     1
+#define JOB_UNEMPLOYED_ID  0
+#define JOB_TRUCKER_ID     1
 
 enum e_JobData
 {
@@ -17,7 +17,7 @@ static const g_arrJobData[][e_JobData] =
 {
     // Trucker
     {
-        JOB_TRUCKER, "Camionero", {2455.14282, -2113.93774, 13.65593}
+        JOB_TRUCKER_ID, "Camionero", {2455.14282, -2113.93774, 13.65593}
     }
 };
 
@@ -103,8 +103,8 @@ stock Job_GetName(const jobId)
 
     switch (jobId) 
     {
-        case JOB_UNEMPLOYED: jobName = "Desempleado";
-        case JOB_TRUCKER: jobName = "Camionero";
+        case JOB_UNEMPLOYED_ID: jobName = "Desempleado";
+        case JOB_TRUCKER_ID: jobName = "Camionero";
         default: jobName = "Unassigned";
     }
 
