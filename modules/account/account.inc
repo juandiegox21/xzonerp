@@ -3,7 +3,7 @@
 // how many seconds until it kicks the player for taking too long to login
 #define	 SECONDS_TO_LOGIN 		60
 
-// default spawn point: Las Venturas (The High Roller)
+// default spawn point: Unity station
 #define 	DEFAULT_POS_X 		1715.6425
 #define 	DEFAULT_POS_Y 		-1931.9774
 #define 	DEFAULT_POS_Z 		13.7526
@@ -21,6 +21,7 @@ enum E_PLAYERS
 	pFactionId,
 	pFactionRankElevation,
 	pJobId,
+	pLvl,
 	Float: pPos_X,
 	Float: pPos_Y,
 	Float: pPos_Z,
@@ -59,6 +60,7 @@ hook OnPlayerConnect(playerid)
 	orm_addvar_int(ormid, Player[playerid][pFactionId], "faction_id");
 	orm_addvar_int(ormid, Player[playerid][pFactionRankElevation], "faction_rank_elevation");
 	orm_addvar_int(ormid, Player[playerid][pJobId], "job_id");
+	orm_addvar_int(ormid, Player[playerid][pLvl], "lvl");
 	orm_addvar_float(ormid, Player[playerid][pPos_X], "pos_x");
 	orm_addvar_float(ormid, Player[playerid][pPos_Y], "pos_y");
 	orm_addvar_float(ormid, Player[playerid][pPos_Z], "pos_z");
@@ -226,6 +228,8 @@ public OnPlayerRegister(playerid)
 	Player[playerid][pPos_Z] = DEFAULT_POS_Z;
 	Player[playerid][pPos_Angle] = DEFAULT_POS_A;
 
+	Account_SetLevel(playerid, 1);
+
 	SetSpawnInfo(playerid, NO_TEAM, 0, Player[playerid][pPos_X], Player[playerid][pPos_Y], Player[playerid][pPos_Z], Player[playerid][pPos_Angle], 0, 0, 0, 0, 0, 0);
 	SpawnPlayer(playerid);
 	
@@ -275,6 +279,22 @@ stock Account_GetPlayerIdBySqlId(SqlId)
 	}
 
 	return playerid;
+}
+
+stock Account_GetLevel(playerid)
+{
+	return Player[playerid][pLvl];
+}
+
+forward Account_SetLevel(playerid, lvl);
+public Account_SetLevel(playerid, lvl);
+{
+	if (lvl < 0) return;
+
+	Player[playerid][pLvl] = lvl;
+
+	orm_save(Player[playerid][pORM_ID]);
+	return 1;
 }
 
 stock Account_GetJobId(playerid) 
