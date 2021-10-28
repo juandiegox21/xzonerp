@@ -26,11 +26,11 @@ And finally, maintaining your version number`:
 Happy Pawning!
 -->
 
- XZRP is a GameMode for San Andreas Multi-Player using PAWN (Based on C).
+XZRP is a GameMode for San Andreas Multi-Player using PAWN (Based on C).
 
-### In the past San Andreas Multi-Player gamemodes used to be written in one file, which made it really hard to mantain and to version it using git.
+In the past San Andreas Multi-Player gamemodes used to be written in one file, which made it really hard to mantain and to version it using git.
 
-### Fortunately this has changed over the years and we are now able to make our code more modular. This is a Roleplay GameMode using:
+Fortunately this has changed over the years and we are now able to make our code more modular. This is a Roleplay GameMode using:
 
 <img width="100px" src="https://d1.awsstatic.com/asset-repository/products/amazon-rds/1024px-MySQL.ff87215b43fd7292af172e2a5d9b844217262571.png" alt="MySQL" title="MySQL" />
 
