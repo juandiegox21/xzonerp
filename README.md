@@ -36,23 +36,23 @@ Fortunately this has changed over the years and we are now able to make our code
 
 <img width="20px" style="margin-left: 30px" src="https://upload.wikimedia.org/wikipedia/commons/7/71/Pawn_logo.png" alt="Pawn" title="Pawn" />
 
-### And the power of [PawnPlus][pawnplusref]
+And the power of [PawnPlus][pawnplusref]
 
 ---
 
-## What this Gamemode Contains:
+What this Gamemode Contains:
 
-### - Player information is stored, coordinates, passwords, etc.
+- Player information is stored, coordinates, passwords, etc.
 
-### - Player password is hashed
+- Player password is hashed
 
-### - Bikes rental (30m and you can extend it 30m more 5 min before it expires)
+- Bikes rental (30m and you can extend it 30m more 5 min before it expires)
 
-### - Factions system with Vehicles, Leadership, and Member Ranks.
+- Factions system with Vehicles, Leadership, and Member Ranks.
 
-### - Roleplay Channel Messages (/me, /do, /b)
+- Roleplay Channel Messages (/me, /do, /b)
 
-### - Basic Job system, with vehicles. (Right now only Trucker Job is available)
+- Basic Job system, with vehicles. (Right now only Trucker Job is available)
 
 ---
 
