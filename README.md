@@ -34,9 +34,11 @@ In the past San Andreas Multi-Player gamemodes used to be written in one file, w
 
 Fortunately this has changed over the years and we are now able to make our code more modular. This is a Roleplay GameMode using:
 
-<img width="100" src="https://d1.awsstatic.com/asset-repository/products/amazon-rds/1024px-MySQL.ff87215b43fd7292af172e2a5d9b844217262571.png" alt="MySQL" title="MySQL" />
+<div>
+  <img width="100" src="https://d1.awsstatic.com/asset-repository/products/amazon-rds/1024px-MySQL.ff87215b43fd7292af172e2a5d9b844217262571.png" alt="MySQL" title="MySQL" />
 &nbsp;&nbsp;&nbsp;&nbsp;
 <img width="20" src="https://upload.wikimedia.org/wikipedia/commons/7/71/Pawn_logo.png" alt="Pawn" title="Pawn" />
+</div>
 
 And the power of [PawnPlus][pawnplusref]
 
