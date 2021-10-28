@@ -26,7 +26,7 @@ And finally, maintaining your version number`:
 Happy Pawning!
 -->
 
-<img src="https://logodix.com/logo/304442.png"/>
+<img width="100px" src="https://logodix.com/logo/304442.png"/>
 
 XZRP is a GameMode for San Andreas Multi-Player using PAWN (Based on C).
 
