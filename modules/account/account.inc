@@ -287,9 +287,9 @@ stock Account_GetLevel(playerid)
 }
 
 forward Account_SetLevel(playerid, lvl);
-public Account_SetLevel(playerid, lvl);
+public Account_SetLevel(playerid, lvl)
 {
-	if (lvl < 0) return;
+	if (lvl < 0) return 0;
 
 	Player[playerid][pLvl] = lvl;
 
