@@ -65,8 +65,9 @@ What this Gamemode Contains:
 ### Just clone the repository and run
 
 ```
-sampctl package install
+sampctl package ensure
 ```
+to install dependencies
 
 ## Usage
 
