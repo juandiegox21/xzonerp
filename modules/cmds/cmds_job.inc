@@ -48,3 +48,14 @@ CMD:trabajo(playerid, params[])
     Dialog_ShowCallback(playerid, using inline DialogJobContract, DIALOG_STYLE_MSGBOX, "Contrato de trabajo", string, "Aceptar", "Cancelar");
     return 1;
 }
+
+CMD:trabajorenunciar(playerid, params[])
+{
+    new string[120];
+
+    format(string, sizeof string, "[ATENCION] "COLOR_WHITE_INLINE" Has renunciado a tu trabajo de "COLOR_ORANGE_INLINE"%s"COLOR_WHITE_INLINE", ahora puedes pertenecer a otro trabajo", Job_GetName(Account_GetJobId(playerid)));
+    SendClientMessage(playerid, COLOR_ORANGE, string);
+
+    Account_SetJobId(playerid, 0);
+    return 1;
+}

@@ -8,6 +8,7 @@ hook OnGameModeInit()
 {
 	Vehicle_CreateFactions();
 	Vehicle_CreateRentals();
+	Vehicle_CreateJobs();
     
     return 1;
 }
